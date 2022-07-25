@@ -34,15 +34,18 @@ namespace Autocomplete
             sugestionBox = new DropDown();
             sugestionBox.Hide();
             trie = Trie.LoadFromFile();
-            //sugestionBox.OnComplete += complete;
+            sugestionBox.OnComplete += complete;
         }
         void complete(object sender, string word)
         {
-            MessageBox.Show(word);
+            appHandler.writeWord(word);
         }
+        private const int SW_SHOWNA = 4;
+        [System.Runtime.InteropServices.DllImport("user32.dll")]
+        private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
         private void AppHandler_OnTextChange(object sender, string e)
         {
-            sugestionBox.Show();
+            ShowWindow(sugestionBox.Handle, SW_SHOWNA);
             sugestionBox.BringToFront();
             string word = GetLastWord(e);
             if (word.Length > 0)
@@ -82,12 +85,14 @@ namespace Autocomplete
         public static string GetLastWord(string phrase, int start = -1)
         {
             int wordEndPosition;
+            if (phrase == null)
+                return "";
             if (start<0)
                 wordEndPosition = phrase.Length;
             else
                 wordEndPosition = start;
             int currentPosition = wordEndPosition;
-            while (currentPosition != 0 && phrase.Substring(currentPosition - 1, 1) != " ")
+            while (currentPosition != 0 && (phrase.Substring(currentPosition - 1, 1) != " "|| phrase.Substring(currentPosition - 1, 1) != "\n"))
                 currentPosition--;
             return phrase.Substring(currentPosition, wordEndPosition - currentPosition);
         }
