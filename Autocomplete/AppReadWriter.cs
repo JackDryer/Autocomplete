@@ -24,6 +24,12 @@ namespace Autocomplete
     {
         private TextPattern textPattern;
         private AutomationElement activeWindow;
+        public void writeWord(string text)
+        {
+            string before = textPattern.DocumentRange.GetText(-1).Trim();
+            int start = before.LastIndexOf(" ");
+            ReplaceTextUsingDll(activeWindow, start+1,start+text.Length,text);
+        }
         public AppReadWriter()
         {
             activeWindow = null;
@@ -58,6 +64,7 @@ namespace Autocomplete
             OnTextChange?.Invoke(this, text);
         }
         const int WM_SETTEXT = 0x000C;
+
         [DllImport("User32.dll", CharSet = CharSet.Auto)]// SetLastError = true
         private static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr wParamm, string lParam);
         private static void SetTextUingDll(AutomationElement handle, string text)
@@ -65,7 +72,18 @@ namespace Autocomplete
             SendMessage(new IntPtr(handle.Current.NativeWindowHandle), WM_SETTEXT, IntPtr.Zero, text);
 
         }
+        const int EM_REPLACESEL = 0x00C2;
+        const int EM_SETSEL = 0x00B1;
+        [DllImport("User32.dll", CharSet = CharSet.Auto)]// SetLastError = true
+        private static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr wParamm, IntPtr lParam);
+        [DllImport("User32.dll", CharSet = CharSet.Auto)]// SetLastError = true
+        private static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, bool wParamm, string lParam);
+        private static void ReplaceTextUsingDll(AutomationElement handle, int start, int end, string text)
+        {
+            SendMessage(new IntPtr(handle.Current.NativeWindowHandle), EM_SETSEL, (IntPtr)start,(IntPtr)end);
+            SendMessage(new IntPtr(handle.Current.NativeWindowHandle), EM_REPLACESEL, true, text);
 
+        }
         public void InsertTextUsingUIAutomation(AutomationElement element,
                                     string value, ReplaceType replace = ReplaceType.None, bool popup = false)
         {
