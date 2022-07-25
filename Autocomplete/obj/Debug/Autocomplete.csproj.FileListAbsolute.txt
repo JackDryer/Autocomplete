@@ -20,3 +20,15 @@ U:\Source\Autocomplete\Autocomplete\obj\Debug\Autocomplete.pdb
 \\bgu-file\student-desktops$\19DryerJo\Desktop\Source\Autocomplete\Autocomplete\obj\Debug\Autocomplete.pdb
 U:\Source\Autocomplete\Autocomplete\obj\Debug\Autocomplete.DropDown.resources
 \\bgu-file\student-desktops$\19dryerjo\Desktop\Source\Autocomplete\Autocomplete\obj\Debug\Autocomplete.DropDown.resources
+C:\Users\JackD\Downloads\Autocomplete\Autocomplete\Autocomplete\bin\Debug\Autocomplete.exe.config
+C:\Users\JackD\Downloads\Autocomplete\Autocomplete\Autocomplete\bin\Debug\Autocomplete.exe
+C:\Users\JackD\Downloads\Autocomplete\Autocomplete\Autocomplete\bin\Debug\Autocomplete.pdb
+C:\Users\JackD\Downloads\Autocomplete\Autocomplete\Autocomplete\obj\Debug\Autocomplete.csproj.AssemblyReference.cache
+C:\Users\JackD\Downloads\Autocomplete\Autocomplete\Autocomplete\obj\Debug\Autocomplete.DropDown.resources
+C:\Users\JackD\Downloads\Autocomplete\Autocomplete\Autocomplete\obj\Debug\Autocomplete.Form1.resources
+C:\Users\JackD\Downloads\Autocomplete\Autocomplete\Autocomplete\obj\Debug\Autocomplete.Properties.Resources.resources
+C:\Users\JackD\Downloads\Autocomplete\Autocomplete\Autocomplete\obj\Debug\Autocomplete.csproj.GenerateResource.cache
+C:\Users\JackD\Downloads\Autocomplete\Autocomplete\Autocomplete\obj\Debug\Autocomplete.csproj.CoreCompileInputs.cache
+C:\Users\JackD\Downloads\Autocomplete\Autocomplete\Autocomplete\obj\Debug\Autocomplete.exe
+C:\Users\JackD\Downloads\Autocomplete\Autocomplete\Autocomplete\obj\Debug\Autocomplete.pdb
+C:\Users\JackD\Downloads\Autocomplete\Autocomplete\Autocomplete\obj\Debug\Autocomplete.csproj.SuggestedBindingRedirects.cache

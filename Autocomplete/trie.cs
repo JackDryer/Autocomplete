@@ -8,6 +8,22 @@ namespace Autocomplete
 {
     class Trie
     {
+        public static Trie LoadFromFile()
+        {
+            Trie outtrie = new Trie();
+            using (var sr = new System.IO.StreamReader("google-10000-english-no-swears.txt"))
+            {
+                string all = sr.ReadToEnd();
+                string[] allList = all.Split('\n');
+                int rank = 1;
+                foreach (string i in allList)
+                {
+                    outtrie.Add(i, rank);
+                    rank++;
+                }
+                return outtrie;
+            }
+        }
         private Dictionary<char, Trie> children;
         private int? rank;
         public void Add(char value)

@@ -36,8 +36,7 @@ namespace Autocomplete
         {
             if (activeWindow != null)
             {
-                Automation.RemoveAutomationEventHandler(TextPattern.TextChangedEvent, activeWindow, handleTextChange);
-
+                Automation.RemoveAutomationEventHandler(TextPattern.TextSelectionChangedEvent, activeWindow, handleTextChange);
                 activeWindow = null;
             }
             activeWindow = AutomationElement.FocusedElement;

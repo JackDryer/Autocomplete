@@ -32,16 +32,37 @@ namespace Autocomplete
                 outtext += word;
                 outtext += "\n";
             }
-            this.wordsBox.Text = outtext;
+            
+            SetText(outtext);
         }
         private void Complete(object sender, EventArgs e)
         {
             OnComplete?.Invoke(this, suggestions[selectedIndex]);
+            //SetText(suggestions[selectedIndex]);
         }
         void OnKeyPressed(object sender, KeyPressedArgs e)
         {
             suggestions.Add(e.KeyPressed.ToString());
             UpdateContents();
+        }
+        delegate void SetTextCallback(string text);
+        private void SetText(string text)
+        {
+            // InvokeRequired required compares the thread ID of the
+            // calling thread to the thread ID of the creating thread.
+            // If these threads are different, it returns true.
+            if (this.wordsBox.InvokeRequired)
+            {
+                if (!this.wordsBox.IsDisposed)
+                {
+                    SetTextCallback d = new SetTextCallback(SetText);
+                    this.Invoke(d, new object[] { text });
+                }
+            }
+            else
+            {
+                this.wordsBox.Text = text;
+            }
         }
         public DropDown()
         {
@@ -51,10 +72,24 @@ namespace Autocomplete
             listener = new LowLevelKeyBoardListener();
             listener.blockKeys.Add("Tab");
             listener.AddEvent("Tab", Complete);
+            listener.blockKeys.Add("Up");
+            listener.AddEvent("Up",aboveOption);
+            listener.blockKeys.Add("Down");
+            listener.AddEvent("Down", bellowOption);
             listener.HookKeyboard();
             //listener.OnKeyPressed += OnKeyPressed;
             suggestions.Add("Ran");
             UpdateContents();
+        }
+        public void aboveOption(object sender, EventArgs e)
+        {
+            if (selectedIndex >0)
+                selectedIndex--;
+        }
+        public void bellowOption(object sender, EventArgs e)
+        {
+            if (selectedIndex < suggestions.Count - 1) 
+                selectedIndex++;
         }
     }
 }

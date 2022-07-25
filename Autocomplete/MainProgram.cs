@@ -14,12 +14,13 @@ namespace Autocomplete
         private AppReadWriter appHandler;
         private LowLevelKeyBoardListener listener;
         private DropDown sugestionBox = null;
+        private Trie trie;
         public MainProgram()
         {
             // Initialize Tray Icon
             trayIcon = new NotifyIcon()
             {
-                Icon = new Icon("U:\\Source\\Task Tray App\\AutoCakeIcon.ico"),
+                Icon = new Icon("C:\\Program Files\\Notepad++\\updater\\updater.ico"),
                 ContextMenu = new ContextMenu(new MenuItem[] {
                 new MenuItem("Exit", Exit)
             }),
@@ -29,16 +30,34 @@ namespace Autocomplete
             // start listening for typing in other apps.
             appHandler = new AppReadWriter();
             appHandler.OnTextChange += AppHandler_OnTextChange;
-            listener = new LowLevelKeyBoardListener();
+            //listener = new LowLevelKeyBoardListener();
+            sugestionBox = new DropDown();
+            sugestionBox.Hide();
+            trie = Trie.LoadFromFile();
+            //sugestionBox.OnComplete += complete;
         }
-
+        void complete(object sender, string word)
+        {
+            MessageBox.Show(word);
+        }
         private void AppHandler_OnTextChange(object sender, string e)
         {
-            if (sugestionBox == null)
-                sugestionBox = new DropDown();
             sugestionBox.Show();
-            sugestionBox.suggestions.Add("hi there");
-            sugestionBox.UpdateContents();
+            sugestionBox.BringToFront();
+            string word = GetLastWord(e);
+            if (word.Length > 0)
+            {
+                Dictionary<int, string> ordered = trie.GetCompletions(word);
+                List<int> keys = ordered.Keys.ToList();
+                keys.Sort();
+                List<string> values = new List<string>();
+                foreach (int i in keys)
+                {
+                    values.Add(ordered[i]);
+                }
+                sugestionBox.suggestions = values; 
+            }
+            //sugestionBox.UpdateContents();
         }
         
         void Exit(object sender, EventArgs e)

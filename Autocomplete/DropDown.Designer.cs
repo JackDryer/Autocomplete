@@ -34,6 +34,7 @@
             // wordsBox
             // 
             this.wordsBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.wordsBox.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.wordsBox.Location = new System.Drawing.Point(0, 0);
             this.wordsBox.Name = "wordsBox";
             this.wordsBox.ReadOnly = true;
@@ -45,6 +46,7 @@
             // DropDown
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+            this.CausesValidation = false;
             this.ClientSize = new System.Drawing.Size(275, 130);
             this.Controls.Add(this.wordsBox);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;

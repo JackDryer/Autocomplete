@@ -20,14 +20,14 @@ namespace Autocomplete
             InitializeComponent();
             combo = new ComboBox();
             wordPredictor = new Trie();
-            using (var sr = new StreamReader("U:\\Source\\Autocomplete\\google-10000-english-no-swears.txt"))
+            using (var sr = new StreamReader("google-10000-english-no-swears.txt"))
             {
                 string all = sr.ReadToEnd();
                 string[] allList = all.Split('\n');
                 int rank = 1;
                 foreach (string i in allList)
                 {
-                    wordPredictor.Add(i,rank);
+                    wordPredictor.Add(i, rank);
                     rank++;
                 }
                 /*Dictionary<int, string> ordered = wordPredictor.GetCompletions("bec");
@@ -61,6 +61,7 @@ namespace Autocomplete
             {
                 values.Add(ordered[i]);
             }
+            //values.Insert(0, word);
             CreateDropDown(InputBox.GetPositionFromCharIndex(InputBox.SelectionStart), values) ;
         }
         private string GetCurrentWord()
