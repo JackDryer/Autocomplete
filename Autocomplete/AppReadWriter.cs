@@ -27,7 +27,7 @@ namespace Autocomplete
         public void writeWord(string text)
         {
             string before = textPattern.DocumentRange.GetText(-1).Trim();
-            int start = before.LastIndexOf(" ");
+            int start = before.LastIndexOfAny(" \n".ToCharArray());
             ReplaceTextUsingDll(activeWindow, start+1,start+text.Length,text);
         }
         public AppReadWriter()

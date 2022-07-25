@@ -92,7 +92,7 @@ namespace Autocomplete
             else
                 wordEndPosition = start;
             int currentPosition = wordEndPosition;
-            while (currentPosition != 0 && (phrase.Substring(currentPosition - 1, 1) != " "|| phrase.Substring(currentPosition - 1, 1) != "\n"))
+            while (currentPosition != 0 && phrase.Substring(currentPosition - 1, 1) != " " &&phrase.Substring(currentPosition - 1, 1) != "\n")
                 currentPosition--;
             return phrase.Substring(currentPosition, wordEndPosition - currentPosition);
         }
