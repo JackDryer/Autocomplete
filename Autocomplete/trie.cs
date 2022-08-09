@@ -24,44 +24,47 @@ namespace Autocomplete
                 return outtrie;
             }
         }
-        private Dictionary<char, Trie> children;
-        private int? rank;
-        public void Add(char value)
-        {
-            if (!children.ContainsKey(value))
-                this.children[value] = new Trie();
-        }
-        public void Add(string word, int? rank)
+        public void Add(string word, double probability)
         {
             if (word.Length > 0)
             {
                 if (children.ContainsKey(word[0]))
                 {
-                    children[word[0]].Add(word.Substring(1), rank);
+                    children[word[0]].Add(word.Substring(1), probability);
+                    probabilities[word[0]] += probability;
                 }
                 else
-                    children[word[0]] = new Trie(word.Substring(1), rank);
+                {
+                    children[word[0]] = new Trie(word.Substring(1), probability);
+                    probabilities[word[0]] = probability;
+                }
+
 
             }
             else
             {
-                this.rank = rank;
+                if (probabilities.ContainsKey('\0'))
+                    probabilities['\0'] += probability;
+                else
+                    probabilities['\0'] = probability;
             }
         }
+        private Dictionary<char, Trie> children;
+        private Dictionary<char, double> probabilities;
         public Trie()
         {
             this.children = new Dictionary<char, Trie>();
-            rank = null;
+            probabilities = new Dictionary<char, double>();
         }
-        public Trie(string word, int? rank)
+        public Trie(string word, double probability)
         {
             this.children = new Dictionary<char, Trie>();
             if (word.Length > 0)
             {
-                this.rank = null;
-                this.children[word[0]] = new Trie(word.Substring(1), rank);
+                this.children[word[0]] = new Trie(word.Substring(1), probability);
+                probabilities[word[0]] = probability;
             }
-            else this.rank = rank;
+            else probabilities['\0'] = probability;
 
         }
 
@@ -69,7 +72,7 @@ namespace Autocomplete
         {
             if (word.Length == 0)
             {
-                return (this.rank != null);
+                return probabilities.ContainsKey('\0');
             }
             else if (children.ContainsKey(word[0]))
 
@@ -78,30 +81,32 @@ namespace Autocomplete
                 return false;
         }
 
-        public List<string> Traverse()
-        {
-            List<string> output = new List<string>();
-            if (this.rank != null)
-                output.Add("");
-            foreach (var item in children)
+        }
+        public List<string> OrderedTraverse(int maxreturn = 100, double minimumprobability = 0)
             {
-                foreach (string wordPart in item.Value.Traverse())
-                    output.Add(item.Key + wordPart);
+            var toSearch = new List<Tuple<double, Trie,string>>();
+            toSearch.Add(new Tuple<double, Trie, string>(1, this,""));
+            var output = new List<string>();
+            Trie mostProbable;
+            string pastWord;
+            while (toSearch.Count >0 && output.Count < maxreturn)
+            {
+                toSearch.Sort((a, b) => b.Item1.CompareTo(a.Item1));
+                mostProbable = toSearch[0].Item2;
+                pastWord = toSearch[0].Item3;
+                toSearch.RemoveAt(0);
+                if (mostProbable == null)
+                    output.Add(pastWord);
+                else {
+                    foreach (KeyValuePair<char, double> i in mostProbable.probabilities)
+                        if (i.Key == '\0')
+                            toSearch.Add(new Tuple<double, Trie, string>(i.Value, null, pastWord));
+                    else
+                        toSearch.Add(new Tuple<double, Trie,string>(i.Value, mostProbable,pastWord+i.Key));
+                }
             }
             return output;
-        }
-        public Dictionary<int, string> OrderedTraverse()
-        {
-            Dictionary<int, string> output = new Dictionary<int, string>();
-            if (this.rank != null)
-                output[(int)this.rank] = ("");
-            foreach (var item in children)
-            {
-                foreach (var wordkeyvaluepair in item.Value.OrderedTraverse())
-                    output[wordkeyvaluepair.Key] = (item.Key + wordkeyvaluepair.Value);
             }
-            return output;
-        }
         public Dictionary<int, string> GetCompletions(string incomplete)
         {
             if (incomplete.Length == 0)
