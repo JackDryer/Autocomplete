@@ -81,7 +81,7 @@ namespace Autocomplete
                 return false;
         }
 
-        }
+
         public List<string> OrderedTraverse(int maxreturn = 100, double minimumprobability = 0)
             {
             var toSearch = new List<Tuple<double, Trie,string>>();
