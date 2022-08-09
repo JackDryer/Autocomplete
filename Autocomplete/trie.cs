@@ -87,11 +87,13 @@ namespace Autocomplete
             var toSearch = new List<Tuple<double, Trie,string>>();
             toSearch.Add(new Tuple<double, Trie, string>(1, this,""));
             var output = new List<string>();
+            double probabilty;
             Trie mostProbable;
             string pastWord;
             while (toSearch.Count >0 && output.Count < maxreturn)
             {
                 toSearch.Sort((a, b) => b.Item1.CompareTo(a.Item1));
+                probabilty = toSearch[0].Item1;
                 mostProbable = toSearch[0].Item2;
                 pastWord = toSearch[0].Item3;
                 toSearch.RemoveAt(0);
@@ -99,30 +101,58 @@ namespace Autocomplete
                     output.Add(pastWord);
                 else {
                     foreach (KeyValuePair<char, double> i in mostProbable.probabilities)
+                    {
                         if (i.Key == '\0')
-                            toSearch.Add(new Tuple<double, Trie, string>(i.Value, null, pastWord));
-                    else
-                        toSearch.Add(new Tuple<double, Trie,string>(i.Value, mostProbable,pastWord+i.Key));
+                            toSearch.Add(new Tuple<double, Trie, string>(i.Value * probabilty, null, pastWord));
+                        else
+                            toSearch.Add(new Tuple<double, Trie, string>(i.Value * probabilty, mostProbable, pastWord + i.Key));
+                    }
                 }
             }
             return output;
             }
-        public Dictionary<int, string> GetCompletions(string incomplete)
+        public List<string> GetCompletions(string incomplete, int maxreturn = 100, double minimumprobability = 0)
         {
-            if (incomplete.Length == 0)
+            var toSearch = new List<Tuple<double, Trie, string>>();
+            toSearch.Add(new Tuple<double, Trie, string>(1, this, ""));
+            var output = new List<string>();
+            double probabilty;
+            Trie mostProbable;
+            string pastWord;
+            int index;
+            double keyprobablity;
+            while (toSearch.Count > 0 && output.Count < maxreturn)
             {
-                return this.OrderedTraverse();
+                toSearch.Sort((a, b) => b.Item1.CompareTo(a.Item1));
+                probabilty = toSearch[0].Item1;
+                mostProbable = toSearch[0].Item2;
+                pastWord = toSearch[0].Item3;
+                index = pastWord.Length;
+                toSearch.RemoveAt(0);
+                if (mostProbable == null)
+                    output.Add(pastWord);
+                else
+                {
+                    foreach (KeyValuePair<char, double> i in mostProbable.probabilities)
+                    {
+                        if (index < incomplete.Length)
+                            keyprobablity = i.Value * caclucateKeyProbability(i.Key, incomplete[index]);
+                        else
+                            keyprobablity = i.Value;
+                        if (i.Key == '\0')
+
+                            toSearch.Add(new Tuple<double, Trie, string>(keyprobablity * probabilty, null, pastWord));
+                        else
+                            toSearch.Add(new Tuple<double, Trie, string>(keyprobablity * probabilty, mostProbable, pastWord + i.Key));
+                    }
+                }
             }
-            if (children.ContainsKey(incomplete[0]))
-            {
-                Dictionary<int, string> output;
-                output = children[incomplete[0]].GetCompletions(incomplete.Substring(1));
-                foreach (var keyvalue in output.ToArray())
-                    output[keyvalue.Key] = incomplete[0] + keyvalue.Value;
-                return output;
-            }
-            else
-                return new Dictionary<int, string>();
+            return output;
+        }
+        double caclucateKeyProbability(char targetkey, char referancekey)
+        {
+            if (targetkey == referancekey) return 0.99;
+            else return 0.01;
         }
 
     }
