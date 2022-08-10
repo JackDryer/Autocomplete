@@ -53,14 +53,7 @@ namespace Autocomplete
                 combo.Hide();
                 return;
             }
-            Dictionary<int, string> ordered = wordPredictor.GetCompletions(word);
-            List<int> keys = ordered.Keys.ToList();
-            keys.Sort();
-            List<string> values = new List<string>();
-            foreach (int i in keys)
-            {
-                values.Add(ordered[i]);
-            }
+            List<string> values = wordPredictor.GetCompletions(word);
             //values.Insert(0, word);
             CreateDropDown(InputBox.GetPositionFromCharIndex(InputBox.SelectionStart), values) ;
         }

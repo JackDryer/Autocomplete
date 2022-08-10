@@ -8,71 +8,82 @@ namespace Autocomplete
 {
     class Trie
     {
+        static double MATCH = 0.99;
+        static double NEAR = 0.8;
+        static double WRONG = 0.01;
+        static bool DEBUG = false;
         public static Trie LoadFromFile()
         {
             Trie outtrie = new Trie();
-            using (var sr = new System.IO.StreamReader("google-10000-english-no-swears.txt"))
+            using (var sr = new System.IO.StreamReader("processed.txt"))
             {
                 string all = sr.ReadToEnd();
                 string[] allList = all.Split('\n');
-                int rank = 1;
                 foreach (string i in allList)
                 {
-                    outtrie.Add(i, rank);
-                    rank++;
+                    string[] split = i.Split(':');
+                    outtrie.Add(split[0], int.Parse(split[1]));
                 }
                 return outtrie;
             }
         }
-        public void Add(string word, double probability)
+        public void Add(string word, int frequency)
         {
             if (word.Length > 0)
             {
                 if (children.ContainsKey(word[0]))
                 {
-                    children[word[0]].Add(word.Substring(1), probability);
-                    probabilities[word[0]] += probability;
+                    children[word[0]].Add(word.Substring(1), frequency);
+                    frequencies[word[0]] += frequency;
                 }
                 else
                 {
-                    children[word[0]] = new Trie(word.Substring(1), probability);
-                    probabilities[word[0]] = probability;
+                    children[word[0]] = new Trie(word.Substring(1), frequency);
+                    frequencies[word[0]] = frequency;
                 }
 
 
             }
             else
             {
-                if (probabilities.ContainsKey('\0'))
-                    probabilities['\0'] += probability;
+                if (frequencies.ContainsKey('$'))
+                    frequencies['$'] += frequency;
                 else
-                    probabilities['\0'] = probability;
+                    frequencies['$'] = frequency;
             }
+            totalcount += frequency;
         }
         private Dictionary<char, Trie> children;
-        private Dictionary<char, double> probabilities;
+        private Dictionary<char, int> frequencies;
+        private int totalcount =0; // for speed
         public Trie()
         {
             this.children = new Dictionary<char, Trie>();
-            probabilities = new Dictionary<char, double>();
+            frequencies = new Dictionary<char, int>();
         }
-        public Trie(string word, double probability)
+        public Trie(string word, int frequency)
         {
+            this.frequencies = new Dictionary<char, int>();
             this.children = new Dictionary<char, Trie>();
             if (word.Length > 0)
             {
-                this.children[word[0]] = new Trie(word.Substring(1), probability);
-                probabilities[word[0]] = probability;
+                this.children[word[0]] = new Trie(word.Substring(1), frequency);
+                frequencies[word[0]] = frequency;
             }
-            else probabilities['\0'] = probability;
+            else
+            {
+                frequencies['$'] = frequency;
+            }
 
+
+            totalcount += frequency;
         }
 
         public bool Contains(string word)
         {
             if (word.Length == 0)
             {
-                return probabilities.ContainsKey('\0');
+                return frequencies.ContainsKey('$');
             }
             else if (children.ContainsKey(word[0]))
 
@@ -81,79 +92,97 @@ namespace Autocomplete
                 return false;
         }
 
-
-        public List<string> OrderedTraverse(int maxreturn = 100, double minimumprobability = 0)
-            {
-            var toSearch = new List<Tuple<double, Trie,string>>();
-            toSearch.Add(new Tuple<double, Trie, string>(1, this,""));
-            var output = new List<string>();
-            double probabilty;
-            Trie mostProbable;
-            string pastWord;
-            while (toSearch.Count >0 && output.Count < maxreturn)
-            {
-                toSearch.Sort((a, b) => b.Item1.CompareTo(a.Item1));
-                probabilty = toSearch[0].Item1;
-                mostProbable = toSearch[0].Item2;
-                pastWord = toSearch[0].Item3;
-                toSearch.RemoveAt(0);
-                if (mostProbable == null)
-                    output.Add(pastWord);
-                else {
-                    foreach (KeyValuePair<char, double> i in mostProbable.probabilities)
-                    {
-                        if (i.Key == '\0')
-                            toSearch.Add(new Tuple<double, Trie, string>(i.Value * probabilty, null, pastWord));
-                        else
-                            toSearch.Add(new Tuple<double, Trie, string>(i.Value * probabilty, mostProbable, pastWord + i.Key));
-                    }
-                }
-            }
-            return output;
-            }
         public List<string> GetCompletions(string incomplete, int maxreturn = 100, double minimumprobability = 0)
         {
-            var toSearch = new List<Tuple<double, Trie, string>>();
-            toSearch.Add(new Tuple<double, Trie, string>(1, this, ""));
+            var toSearch = new SortedList<double, Tuple<Trie, string>>(new DuplicateKeyComparer<double>());
+            toSearch.Add(1,new Tuple<Trie, string>(this, ""));
             var output = new List<string>();
-            double probabilty;
+            double probability = 1;
             Trie mostProbable;
+            double wordProbability;
             string pastWord;
             int index;
-            double keyprobablity;
-            while (toSearch.Count > 0 && output.Count < maxreturn)
+            string surround;
+            while (toSearch.Count > 0 && output.Count < maxreturn && probability> minimumprobability)
             {
-                toSearch.Sort((a, b) => b.Item1.CompareTo(a.Item1));
-                probabilty = toSearch[0].Item1;
-                mostProbable = toSearch[0].Item2;
-                pastWord = toSearch[0].Item3;
+                probability = toSearch.Last().Key;
+                mostProbable = toSearch.Last().Value.Item1;
+                pastWord = toSearch.Last().Value.Item2;
                 index = pastWord.Length;
-                toSearch.RemoveAt(0);
+                toSearch.RemoveAt(toSearch.Count-1);
                 if (mostProbable == null)
-                    output.Add(pastWord);
+                {
+                    if (DEBUG)
+                        output.Add(pastWord+probability.ToString());
+                    else
+                        output.Add(pastWord);
+                }
                 else
                 {
-                    foreach (KeyValuePair<char, double> i in mostProbable.probabilities)
+                    if (index > 0 && index < incomplete.Length - 1)
+                        surround = incomplete.Substring(index - 1, 3);
+                    else if (index == 0 && incomplete.Length>1)
+                        surround = incomplete.Substring(index, 2);
+                    else if (index == incomplete.Length - 1 && incomplete.Length > 1)
+                        surround = incomplete.Substring(index - 1, 2);
+                    else surround = "";
+                    //Console.WriteLine(surround);
+                    foreach (KeyValuePair<char, double> i in mostProbable.getKeyProbabilities(incomplete.ElementAtOrDefault(index), surround))
                     {
-                        if (index < incomplete.Length)
-                            keyprobablity = i.Value * caclucateKeyProbability(i.Key, incomplete[index]);
-                        else
-                            keyprobablity = i.Value;
-                        if (i.Key == '\0')
+                        if (i.Key == '$')
+                        {
+                            var lengthdiff = incomplete.Length - pastWord.Length;// only is an issue when the word is too short, this is an autocomplete after all
+                            if (lengthdiff > 1)
+                            {
+                                wordProbability = probability * Math.Pow(WRONG, lengthdiff);
+                            }
+                            else wordProbability = probability;
+                            toSearch.Add(i.Value * wordProbability,new Tuple<Trie, string>(null, pastWord));
 
-                            toSearch.Add(new Tuple<double, Trie, string>(keyprobablity * probabilty, null, pastWord));
+                        }
                         else
-                            toSearch.Add(new Tuple<double, Trie, string>(keyprobablity * probabilty, mostProbable, pastWord + i.Key));
+                            toSearch.Add(i.Value * probability,new Tuple<Trie, string>(mostProbable.children[i.Key], pastWord + i.Key));
                     }
                 }
             }
             return output;
         }
-        double caclucateKeyProbability(char targetkey, char referancekey)
+        double getKeyProbability(char targetkey, char referancekey,string nearkeys = "")
         {
-            if (targetkey == referancekey) return 0.99;
-            else return 0.01;
+            if (targetkey == referancekey) return MATCH;
+            else if (nearkeys.Contains(targetkey)) return NEAR;
+            else return WRONG;
+        }
+        Dictionary<char, double> getKeyProbabilities(char referance, string nearkeys = "")
+        {
+            var output = new Dictionary<char, double>();
+            foreach (KeyValuePair<char, int> i in this.frequencies)
+            {
+                if (referance == '\0')
+                    output[i.Key] = (double)i.Value / (double)this.totalcount;
+                else
+                    output[i.Key] = ((double)i.Value / (double)this.totalcount) * this.getKeyProbability(i.Key, referance, nearkeys);
+            }
+            return output;
         }
 
+    }
+    public class DuplicateKeyComparer<TKey>
+                :
+             IComparer<TKey> where TKey : IComparable
+    {
+        #region IComparer<TKey> Members
+
+        public int Compare(TKey x, TKey y)
+        {
+            int result = x.CompareTo(y);
+
+            if (result == 0)
+                return 1; // Handle equality as being greater. Note: this will break Remove(key) or
+            else          // IndexOfKey(key) since the comparer never returns 0 to signal key equality
+                return result;
+        }
+
+        #endregion
     }
 }

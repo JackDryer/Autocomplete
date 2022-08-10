@@ -50,14 +50,7 @@ namespace Autocomplete
             string word = GetLastWord(e);
             if (word.Length > 0)
             {
-                Dictionary<int, string> ordered = trie.GetCompletions(word);
-                List<int> keys = ordered.Keys.ToList();
-                keys.Sort();
-                List<string> values = new List<string>();
-                foreach (int i in keys)
-                {
-                    values.Add(ordered[i]);
-                }
+                List <string> values = trie.GetCompletions(word,10,1E-8);
                 sugestionBox.suggestions = values; 
             }
             //sugestionBox.UpdateContents();
