@@ -12,7 +12,7 @@ namespace Autocomplete
     {
         private NotifyIcon trayIcon;
         private AppReadWriter appHandler;
-        private LowLevelKeyBoardListener listener;
+        //private LowLevelKeyBoardListener listener;
         private DropDown sugestionBox = null;
         private Trie trie;
         public MainProgram()
@@ -35,25 +35,35 @@ namespace Autocomplete
             sugestionBox.Hide();
             trie = Trie.LoadFromFile();
             sugestionBox.OnComplete += complete;
+            appHandler.OnUneditableWindow += AppHandler_OnUneditableWindow;
         }
+
+        private void AppHandler_OnUneditableWindow(object sender, string name)
+        {
+            sugestionBox.Stop();
+        }
+
         void complete(object sender, string word)
         {
             appHandler.writeWord(word);
         }
-        private const int SW_SHOWNA = 4;
-        [System.Runtime.InteropServices.DllImport("user32.dll")]
-        private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+
         private void AppHandler_OnTextChange(object sender, string e)
         {
-            ShowWindow(sugestionBox.Handle, SW_SHOWNA);
-            sugestionBox.BringToFront();
-            string word = GetLastWord(e);
-            if (word.Length > 0)
+            var textrange = appHandler.GetActiveWord();
+            if (textrange != null && textrange.GetBoundingRectangles().Count()>0 && textrange.GetText(-1)!= "")
             {
-                List <string> values = trie.GetCompletions(word,10,1E-8);
-                sugestionBox.suggestions = values; 
+                var loc = textrange.GetBoundingRectangles()[0].BottomLeft;
+                string word = textrange.GetText(-1);
+                sugestionBox.Left = (int)loc.X;
+                sugestionBox.Top = (int)loc.Y;
+                List<string> values = trie.GetCompletions(word, 10, 1E-8);
+                 sugestionBox.suggestions = values;
+                //sugestionBox.UpdateContents();
+                sugestionBox.Start();
             }
-            //sugestionBox.UpdateContents();
+            else
+                sugestionBox.Stop();
         }
         
         void Exit(object sender, EventArgs e)
