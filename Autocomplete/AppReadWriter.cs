@@ -58,9 +58,65 @@ namespace Autocomplete
                 OnUneditableWindow?.Invoke(this, className);
             }
         }
+        [DllImport("user32.dll", SetLastError = true)]
+        private static extern bool GetGUIThreadInfo(uint hTreadID, ref GUITHREADINFO lpgui);
+        [StructLayout(LayoutKind.Sequential)]
+        public struct RECT
+        {
+            public int iLeft;
+            public int iTop;
+            public int iRight;
+            public int iBottom;
+        }
+        [StructLayout(LayoutKind.Sequential)]
+        private struct GUITHREADINFO
+        {
+        public int cbSize;
+        public int flags;
+        public IntPtr hwndActive;
+        public IntPtr hwndFocus;
+        public IntPtr hwndCapture;
+        public IntPtr hwndMenuOwner;
+        public IntPtr hwndMoveSize;
+        public IntPtr hwndCaret;
+        public RECT rectCaret;
+        }
+        [DllImport("user32.dll")]
+        public static extern bool ClientToScreen(IntPtr hWnd, ref Point position);
+        public Point getCaretPositon() //loosely based on https://www.codeproject.com/Articles/34520/Getting-Caret-Position-Inside-Any-Application
+        {
+            var guiInfo = new GUITHREADINFO();
+            guiInfo.cbSize = Marshal.SizeOf(guiInfo);
+            
+            // Get GuiThreadInfo into guiInfo
+            GetGUIThreadInfo(0, ref guiInfo);
+            var caretPosition = new Point();
+            caretPosition.X = (int)guiInfo.rectCaret.iLeft;// + 25;
+            caretPosition.Y = (int)guiInfo.rectCaret.iBottom; // + 25;
+            ClientToScreen(guiInfo.hwndCaret, ref caretPosition);
+            return caretPosition;
+        }
+
+        public TextPatternRange GetActiveWord()
+        {
+            try {
+                var p = getCaretPositon();
+                var range = textPattern.RangeFromPoint(new System.Windows.Point((int)p.X, (int)p.Y-5));
+                range.ExpandToEnclosingUnit(TextUnit.Word);
+                if (range.GetText(-1) == "")
+                {
+                    range.Move(TextUnit.Character,-1);
+                    range.ExpandToEnclosingUnit(TextUnit.Word);
+                }
+                //range.Select();
+                return range;
+            }
+            catch (System.ArgumentException) { return null; }
+        }
         private void handleTextChange(object src, AutomationEventArgs e)
         {
             string text = textPattern.DocumentRange.GetText(-1);
+
             OnTextChange?.Invoke(this, text);
         }
         const int WM_SETTEXT = 0x000C;
