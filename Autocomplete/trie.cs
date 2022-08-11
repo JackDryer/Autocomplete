@@ -103,8 +103,9 @@ namespace Autocomplete
             string pastWord;
             int index;
             string surround;
-            while (toSearch.Count > 0 && output.Count < maxreturn && probability> minimumprobability)
+            while (toSearch.Count > 0 && output.Count < maxreturn)
             {
+                //Console.WriteLine(toSearch.Count);
                 probability = toSearch.Last().Key;
                 mostProbable = toSearch.Last().Value.Item1;
                 pastWord = toSearch.Last().Value.Item2;
@@ -126,22 +127,23 @@ namespace Autocomplete
                     else if (index == incomplete.Length - 1 && incomplete.Length > 1)
                         surround = incomplete.Substring(index - 1, 2);
                     else surround = "";
-                    //Console.WriteLine(surround);
                     foreach (KeyValuePair<char, double> i in mostProbable.getKeyProbabilities(incomplete.ElementAtOrDefault(index), surround))
                     {
+                        wordProbability = i.Value * probability;
                         if (i.Key == '$')
                         {
                             var lengthdiff = incomplete.Length - pastWord.Length;// only is an issue when the word is too short, this is an autocomplete after all
                             if (lengthdiff > 1)
                             {
-                                wordProbability = probability * Math.Pow(WRONG, lengthdiff);
+                                wordProbability = wordProbability * Math.Pow(WRONG, lengthdiff);
                             }
-                            else wordProbability = probability;
-                            toSearch.Add(i.Value * wordProbability,new Tuple<Trie, string>(null, pastWord));
+                            if (wordProbability > minimumprobability)
+                                toSearch.Add(wordProbability,new Tuple<Trie, string>(null, pastWord));
 
                         }
                         else
-                            toSearch.Add(i.Value * probability,new Tuple<Trie, string>(mostProbable.children[i.Key], pastWord + i.Key));
+                            if (wordProbability > minimumprobability)
+                                toSearch.Add(wordProbability,new Tuple<Trie, string>(mostProbable.children[i.Key], pastWord + i.Key));
                     }
                 }
             }
@@ -167,6 +169,8 @@ namespace Autocomplete
         }
 
     }
+
+    //from https://stackoverflow.com/questions/5716423/c-sharp-sortable-collection-which-allows-duplicate-keys
     public class DuplicateKeyComparer<TKey>
                 :
              IComparer<TKey> where TKey : IComparable
