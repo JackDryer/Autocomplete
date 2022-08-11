@@ -51,7 +51,7 @@ namespace Autocomplete
         private void AppHandler_OnTextChange(object sender, string e)
         {
             var textrange = appHandler.GetActiveWord();
-            if (textrange != null && textrange.GetBoundingRectangles().Count()>0 && textrange.GetText(-1)!= "")
+            if (textrange != null && textrange.GetBoundingRectangles().Count()>0 && textrange.GetText(-1).Any(x=>char.IsLetter(x)))
             {
                 var loc = textrange.GetBoundingRectangles()[0].BottomLeft;
                 string word = textrange.GetText(-1);

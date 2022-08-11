@@ -103,7 +103,7 @@ namespace Autocomplete
                 var p = getCaretPositon();
                 var range = textPattern.RangeFromPoint(new System.Windows.Point((int)p.X, (int)p.Y-5));
                 range.ExpandToEnclosingUnit(TextUnit.Word);
-                if (range.GetText(-1) == "")
+                if (!range.GetText(-1).Any(x => char.IsLetter(x)))
                 {
                     range.Move(TextUnit.Character,-1);
                     range.ExpandToEnclosingUnit(TextUnit.Word);
