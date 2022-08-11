@@ -166349,8 +166349,8 @@ vulgarizing:1
 vulgarly:1
 vulgate:1
 vulgus:1
-vulnerabilities:1
-vulnerability:1
+vulnerabilities:5
+vulnerability:5
 vulnerability's:1
 vulnerable:25
 vulnerably:1
