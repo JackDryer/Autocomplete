@@ -23,8 +23,15 @@ namespace Autocomplete
             {
                 namedEvents[keyname] = func;
             }
-
         }
+        public void AddEventOnce(string keyname, EventHandler func)
+        {
+            if (!namedEvents.ContainsKey(keyname))
+            {
+                namedEvents[keyname] = func;
+            }
+        }
+        public void RemoveEvent(string keyname) { namedEvents.Remove(keyname); }
         [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         private static extern IntPtr SetWindowsHookEx(int idHook, LowLevelKeyboardProc lpfn, IntPtr hMod, uint dwThreadId);
 

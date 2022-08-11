@@ -29,6 +29,32 @@ namespace Autocomplete
                 UpdateContents();
             }
         }
+        private const int SW_SHOWNA = 4;
+        [System.Runtime.InteropServices.DllImport("user32.dll")]
+        private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+        public void Start()
+        {
+            ShowWindow(this.Handle, SW_SHOWNA);
+            this.BringToFront();
+            listener.blockKeys.Add("Tab");
+            listener.AddEventOnce("Tab", Complete);
+            listener.blockKeys.Add("Up");
+            listener.AddEventOnce("Up", aboveOption);
+            listener.blockKeys.Add("Down");
+            listener.AddEventOnce("Down", bellowOption);
+            listener.HookKeyboard();
+        }
+        public void Stop()
+        {
+            this.Hide();
+            listener.blockKeys.Remove("Tab");
+            listener.RemoveEvent("Tab");
+            listener.blockKeys.Remove("Up");
+            listener.RemoveEvent("Up");
+            listener.blockKeys.Remove("Down");
+            listener.RemoveEvent("Down");
+            listener.UnHookKeyboard();
+        }
         delegate void UpdateCallBack();
         public void UpdateContents()
         {
@@ -99,15 +125,8 @@ namespace Autocomplete
             _suggestions = new List<string>();
             selectedIndex = 0;
             listener = new LowLevelKeyBoardListener();
-            listener.blockKeys.Add("Tab");
-            listener.AddEvent("Tab", Complete);
-            listener.blockKeys.Add("Up");
-            listener.AddEvent("Up",aboveOption);
-            listener.blockKeys.Add("Down");
-            listener.AddEvent("Down", bellowOption);
-            listener.HookKeyboard();
+
             //listener.OnKeyPressed += OnKeyPressed;
-            suggestions.Add("Ran");
         }
         public void aboveOption(object sender, EventArgs e)
         {
