@@ -42,6 +42,9 @@
             this.wordsBox.Size = new System.Drawing.Size(275, 130);
             this.wordsBox.TabIndex = 0;
             this.wordsBox.Text = "";
+            this.wordsBox.Click += new System.EventHandler(this.wordsBox_Click);
+            this.wordsBox.MouseLeave += new System.EventHandler(this.wordsBox_MouseLeave);
+            this.wordsBox.MouseMove += new System.Windows.Forms.MouseEventHandler(this.wordsBox_MouseMove);
             // 
             // DropDown
             // 
@@ -51,6 +54,7 @@
             this.Controls.Add(this.wordsBox);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "DropDown";
+            this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.Text = "DropDown";
             this.TopMost = true;

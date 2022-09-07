@@ -86,6 +86,8 @@ namespace Autocomplete
                 wordsBox.SelectionStart = start;
                 wordsBox.SelectionLength = range;
                 wordsBox.SelectionColor = Color.Red;
+                oldSelection[0] = 0;
+                oldSelection[1] = 0;
             }
 
         }
@@ -119,14 +121,19 @@ namespace Autocomplete
                 this.wordsBox.Text = text;
             }
         }
+        delegate void Callback();
         public DropDown()
         {
             InitializeComponent();
             _suggestions = new List<string>();
             selectedIndex = 0;
             listener = new LowLevelKeyBoardListener();
-
             //listener.OnKeyPressed += OnKeyPressed;
+        }
+        private void loadunload()
+        {
+            ShowWindow(this.Handle, SW_SHOWNA);
+            Hide();
         }
         public void aboveOption(object sender, EventArgs e)
         {
@@ -143,6 +150,40 @@ namespace Autocomplete
             else
                 selectedIndex = 0;
             UpdateContents();
+        }
+
+        int[] oldSelection = {0,0};
+
+        private void wordsBox_MouseMove(object sender, MouseEventArgs e)
+        {
+            wordsBox.SelectionStart = oldSelection[0];
+            wordsBox.SelectionLength = oldSelection[1];
+            wordsBox.SelectionColor = Color.Black;
+            var p = new Point(MousePosition.X - Left, MousePosition.Y - Top);
+            int selected = wordsBox.GetCharIndexFromPosition(p);
+            int end = wordsBox.Text.IndexOf('\n', selected);
+            int start = wordsBox.Text.Substring(0, selected).LastIndexOf('\n');
+            start++;
+            if (start < end)
+            {
+                wordsBox.SelectionStart = start;
+                wordsBox.SelectionLength = end - start;
+                wordsBox.SelectionColor = Color.IndianRed;
+                oldSelection[0] = start;
+                oldSelection[1] = end - start;
+            }
+
+
+        }
+
+        private void wordsBox_MouseLeave(object sender, EventArgs e)
+        {
+            UpdateContents();
+        }
+
+        private void wordsBox_Click(object sender, EventArgs e)
+        {
+            OnComplete?.Invoke(this, wordsBox.Text.Substring(oldSelection[0], oldSelection[1]));
         }
     }
 }
