@@ -15,12 +15,13 @@ namespace Autocomplete
         //private LowLevelKeyBoardListener listener;
         private DropDown sugestionBox = null;
         private Trie trie;
+        private System.Windows.Automation.Text.TextPatternRange textrange;
         public MainProgram()
         {
             // Initialize Tray Icon
             trayIcon = new NotifyIcon()
             {
-                Icon = new Icon("C:\\Program Files\\Notepad++\\updater\\updater.ico"),
+                Icon = new Icon("H:\\Projects\\Python\\AutoCakeIcon.ico"),
                 ContextMenu = new ContextMenu(new MenuItem[] {
                 new MenuItem("Exit", Exit)
             }),
@@ -45,12 +46,12 @@ namespace Autocomplete
 
         void complete(object sender, string word)
         {
-            appHandler.writeWord(word);
+            appHandler.ReplaceWord(word,textrange);
         }
 
         private void AppHandler_OnTextChange(object sender, string e)
         {
-            var textrange = appHandler.GetActiveWord();
+            textrange = appHandler.GetActiveWord();
             if (textrange != null && textrange.GetBoundingRectangles().Count()>0 && textrange.GetText(-1).Any(x=>char.IsLetter(x)))
             {
                 var loc = textrange.GetBoundingRectangles()[0].BottomLeft;
