@@ -57,7 +57,7 @@ namespace Autocomplete
                 string word = textrange.GetText(-1);
                 sugestionBox.Left = (int)loc.X;
                 sugestionBox.Top = (int)loc.Y;
-                List<string> values = trie.GetCompletions(word, 10, 1E-8);
+                List<string> values = trie.GetCompletions(word, 10, 1E-18);
                  sugestionBox.suggestions = values;
                 //sugestionBox.UpdateContents();
                 sugestionBox.Start();

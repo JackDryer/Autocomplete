@@ -11,7 +11,7 @@ namespace Autocomplete
         static double MATCH = 0.99;
         static double NEAR = 0.8;
         static double WRONG = 0.01;
-        static bool DEBUG = false;
+        static bool DEBUG = true;
         public static Trie LoadFromFile()
         {
             Trie outtrie = new Trie();
@@ -94,8 +94,9 @@ namespace Autocomplete
 
         public List<string> GetCompletions(string incomplete, int maxreturn = 100, double minimumprobability = 0)
         {
-            var toSearch = new SortedList<double, Tuple<Trie, string>>(new DuplicateKeyComparer<double>());
-            toSearch.Add(1,new Tuple<Trie, string>(this, ""));
+            //var toSearch = new SortedList <double, Tuple<Trie, string>>(new DuplicateKeyComparer<double>());
+            var toSearch = new BinaryHeap <Tuple<Trie, string>> (300,null);
+            toSearch.Insert(1,new Tuple<Trie, string>(this, ""));
             var output = new List<string>();
             double probability = 1;
             Trie mostProbable;
@@ -105,12 +106,13 @@ namespace Autocomplete
             string surround;
             while (toSearch.Count > 0 && output.Count < maxreturn)
             {
+                Console.WriteLine(toSearch.Count);
                 //Console.WriteLine(toSearch.Count);
-                probability = toSearch.Last().Key;
-                mostProbable = toSearch.Last().Value.Item1;
-                pastWord = toSearch.Last().Value.Item2;
+                probability = toSearch.PeekOfHeap().Key;
+                mostProbable = toSearch.PeekOfHeap().Value.Item1;
+                pastWord = toSearch.PeekOfHeap().Value.Item2;
                 index = pastWord.Length;
-                toSearch.RemoveAt(toSearch.Count-1);
+                toSearch.extractHeadOfHeap();
                 if (mostProbable == null)
                 {
                     if (DEBUG)
@@ -138,12 +140,12 @@ namespace Autocomplete
                                 wordProbability = wordProbability * Math.Pow(WRONG, lengthdiff);
                             }
                             if (wordProbability > minimumprobability)
-                                toSearch.Add(wordProbability,new Tuple<Trie, string>(null, pastWord));
+                                toSearch.Insert(wordProbability,new Tuple<Trie, string>(null, pastWord));
 
                         }
                         else
                             if (wordProbability > minimumprobability)
-                                toSearch.Add(wordProbability,new Tuple<Trie, string>(mostProbable.children[i.Key], pastWord + i.Key));
+                                toSearch.Insert(wordProbability,new Tuple<Trie, string>(mostProbable.children[i.Key], pastWord + i.Key));
                     }
                 }
             }
@@ -189,4 +191,5 @@ namespace Autocomplete
 
         #endregion
     }
+
 }
