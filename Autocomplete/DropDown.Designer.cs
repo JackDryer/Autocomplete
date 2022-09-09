@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DropDown));
             this.wordsBox = new System.Windows.Forms.RichTextBox();
             this.SuspendLayout();
             // 
@@ -53,6 +54,7 @@
             this.ClientSize = new System.Drawing.Size(275, 130);
             this.Controls.Add(this.wordsBox);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "DropDown";
             this.ShowIcon = false;
             this.ShowInTaskbar = false;

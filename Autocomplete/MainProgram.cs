@@ -21,7 +21,8 @@ namespace Autocomplete
             // Initialize Tray Icon
             trayIcon = new NotifyIcon()
             {
-                Icon = new Icon("H:\\Projects\\Python\\AutoCakeIcon.ico"),
+                Icon = Properties.Resources.Autocomplete_Logo,
+                Text = "Autocomplete.exe",
                 ContextMenu = new ContextMenu(new MenuItem[] {
                 new MenuItem("Exit", Exit)
             }),

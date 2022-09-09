@@ -11,7 +11,7 @@ namespace Autocomplete
         static double MATCH = 0.999;
         static double NEAR = 0.8;
         static double WRONG = 0.01;
-        static bool DEBUG = true;
+        static bool DEBUG = false;
         public static Trie LoadFromFile()
         {
             Trie outtrie = new Trie();
@@ -106,7 +106,8 @@ namespace Autocomplete
             string surround;
             while (toSearch.Count > 0 && output.Count < maxreturn)
             {
-                Console.WriteLine(toSearch.Count);
+                if (DEBUG)
+                    Console.WriteLine(toSearch.Count);
                 //Console.WriteLine(toSearch.Count);
                 probability = toSearch.PeekOfHeap().Key;
                 mostProbable = toSearch.PeekOfHeap().Value.Item1;
