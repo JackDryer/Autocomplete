@@ -24,11 +24,15 @@ namespace Autocomplete
     {
         private TextPattern textPattern;
         private AutomationElement activeWindow;
-        public void writeWord(string text)
+        public void ReplaceWord(string text,TextPatternRange rangeToReplace)
         {
-            string before = textPattern.DocumentRange.GetText(-1).Trim();
-            int start = before.LastIndexOfAny(" \n".ToCharArray());
-            ReplaceTextUsingDll(activeWindow, start+1,start+text.Length,text);
+            int start = GetRangeIndex(rangeToReplace);
+            int end = start + rangeToReplace.GetText(-1).Length;
+            ReplaceTextUsingDll(activeWindow,start,end,text);
+        }
+        public int GetRangeIndex(TextPatternRange range)
+        {
+            return range.CompareEndpoints(TextPatternRangeEndpoint.Start, textPattern.DocumentRange, TextPatternRangeEndpoint.Start);
         }
         public AppReadWriter()
         {

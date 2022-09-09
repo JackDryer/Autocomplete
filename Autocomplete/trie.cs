@@ -8,7 +8,7 @@ namespace Autocomplete
 {
     class Trie
     {
-        static double MATCH = 0.99;
+        static double MATCH = 0.999;
         static double NEAR = 0.8;
         static double WRONG = 0.01;
         static bool DEBUG = true;
