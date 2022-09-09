@@ -42,6 +42,8 @@ namespace Autocomplete
             listener.AddEventOnce("Up", aboveOption);
             listener.blockKeys.Add("Down");
             listener.AddEventOnce("Down", bellowOption);
+            listener.blockKeys.Add("Escape");
+            listener.AddEventOnce("Escape", Stop);
             listener.HookKeyboard();
         }
         public void Stop()
@@ -53,7 +55,13 @@ namespace Autocomplete
             listener.RemoveEvent("Up");
             listener.blockKeys.Remove("Down");
             listener.RemoveEvent("Down");
+            listener.blockKeys.Remove("Escape");
+            listener.RemoveEvent("Escape");
             listener.UnHookKeyboard();
+        }
+        void Stop (object sender, EventArgs e)
+        {
+            Stop();
         }
         delegate void UpdateCallBack();
         public void UpdateContents()
@@ -99,8 +107,9 @@ namespace Autocomplete
         }
         void OnKeyPressed(object sender, KeyPressedArgs e)
         {
-            suggestions.Add(e.KeyPressed.ToString());
-            UpdateContents();
+            //suggestions.Add(e.KeyPressed.ToString());
+            //UpdateContents();
+            //MessageBox.Show(e.KeyPressed.ToString());
         }
         delegate void SetTextCallback(string text);
         private void SetText(string text)
