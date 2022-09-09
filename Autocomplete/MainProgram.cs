@@ -59,7 +59,7 @@ namespace Autocomplete
                 string word = textrange.GetText(-1);
                 sugestionBox.Left = (int)loc.X;
                 sugestionBox.Top = (int)loc.Y;
-                List<string> values = trie.GetCompletions(word, 10, 1E-18);
+                List<string> values = trie.GetCompletions(word, 10, 1E-307);// tested to 1E-324, minimum value of a float is ~ 2E-308
                  sugestionBox.suggestions = values;
                 //sugestionBox.UpdateContents();
                 sugestionBox.Start();

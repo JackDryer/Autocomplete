@@ -9,7 +9,7 @@ namespace Autocomplete
     class Trie
     {
         static double MATCH = 0.999;
-        static double NEAR = 0.8;
+        static double NEAR = 0.4;
         static double WRONG = 0.01;
         static bool DEBUG = false;
         public static Trie LoadFromFile()
@@ -106,9 +106,8 @@ namespace Autocomplete
             string surround;
             while (toSearch.Count > 0 && output.Count < maxreturn)
             {
-                if (DEBUG)
-                    Console.WriteLine(toSearch.Count);
-                //Console.WriteLine(toSearch.Count);
+                //if (DEBUG)
+                //    Console.WriteLine(toSearch.Count);
                 probability = toSearch.PeekOfHeap().Key;
                 mostProbable = toSearch.PeekOfHeap().Value.Item1;
                 pastWord = toSearch.PeekOfHeap().Value.Item2;
