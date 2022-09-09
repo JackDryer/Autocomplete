@@ -22,7 +22,6 @@ namespace Autocomplete
             arr.Add(0);//never used
             arr2.Add(none);
             sizeOfTree = 0;
-            Console.WriteLine("Empty heap has been created Successfully");
         }
         public KeyValuePair<double, T> PeekOfHeap()
         {
