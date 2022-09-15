@@ -184,7 +184,11 @@ namespace Autocomplete
 
 
         }
-
+        public void SetTop()
+        {
+            TopLevel = true;
+            TopMost = true;
+        }
         private void wordsBox_MouseLeave(object sender, EventArgs e)
         {
             UpdateContents();

@@ -52,6 +52,7 @@ namespace Autocomplete
 
         private void AppHandler_OnTextChange(object sender, string e)
         {
+            sugestionBox.SetTop();
             textrange = appHandler.GetActiveWord();
             if (textrange != null && textrange.GetBoundingRectangles().Count()>0 && textrange.GetText(-1).Any(x=>char.IsLetter(x)))
             {
