@@ -13,66 +13,10 @@ namespace Autocomplete
 {
     public partial class Form1 : Form
     {
-        ComboBox combo;
-        Trie wordPredictor;
         public Form1()
         {
             InitializeComponent();
-            combo = new ComboBox();
-            wordPredictor = new Trie();
-            using (var sr = new StreamReader("google-10000-english-no-swears.txt"))
-            {
-                string all = sr.ReadToEnd();
-                string[] allList = all.Split('\n');
-                int rank = 1;
-                foreach (string i in allList)
-                {
-                    wordPredictor.Add(i, rank);
-                    rank++;
-                }
-                /*Dictionary<int, string> ordered = wordPredictor.GetCompletions("bec");
-                List<int> keys = ordered.Keys.ToList();
-                keys.Sort();
-                List<string> values = new List<string>();
-                foreach (int i in keys)
-                {
-                    values.Add(ordered[i]);
-                }
-                foreach (string i in values)
-                    MessageBox.Show(i);*/
-                
-            }
-            
 
-        }
-        private void InputBox_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            string word = GetCurrentWord();
-            if (word.Length == 0)
-            {
-                combo.Hide();
-                return;
-            }
-            List<string> values = wordPredictor.GetCompletions(word);
-            //values.Insert(0, word);
-            CreateDropDown(InputBox.GetPositionFromCharIndex(InputBox.SelectionStart), values) ;
-        }
-        private string GetCurrentWord()
-        {
-            int wordEndPosition = InputBox.SelectionStart;
-            int currentPosition = wordEndPosition;
-            while (currentPosition != 0 && InputBox.Text.Substring(currentPosition - 1, 1) != " ")
-                currentPosition--;
-            return InputBox.Text.Substring(currentPosition, wordEndPosition - currentPosition);
-        }
-        private void CreateDropDown(Point pos, List<string> list)
-        { 
-            combo.DataSource =list ;
-            pos.Offset(0, 15);
-            combo.Location = pos;
-            this.Controls.Add(combo);
-            combo.BringToFront();
-            combo.Show();
         }
     }
 

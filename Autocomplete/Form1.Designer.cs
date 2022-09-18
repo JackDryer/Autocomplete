@@ -38,8 +38,8 @@
             this.InputBox.Name = "InputBox";
             this.InputBox.Size = new System.Drawing.Size(800, 450);
             this.InputBox.TabIndex = 0;
-            this.InputBox.Text = "";
-            this.InputBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.InputBox_KeyPress);
+            this.InputBox.Text = "Autocomplete:\nto complete a word either click the word or\nselect the word with th" +
+    "e up and down keys\nenter the selected word with tab";
             // 
             // Form1
             // 
