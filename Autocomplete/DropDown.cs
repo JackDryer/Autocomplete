@@ -99,6 +99,10 @@ namespace Autocomplete
             }
 
         }
+        public int GetHandle()
+        {
+            return wordsBox.Handle.ToInt32();
+        }
         private void Complete(object sender, EventArgs e)
         {
             if (suggestions.Count > 0)
@@ -137,6 +141,7 @@ namespace Autocomplete
             _suggestions = new List<string>();
             selectedIndex = 0;
             listener = new LowLevelKeyBoardListener();
+            SetStyle(ControlStyles.Selectable, false);
             //listener.OnKeyPressed += OnKeyPressed;
         }
         private void loadunload()

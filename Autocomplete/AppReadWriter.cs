@@ -24,6 +24,7 @@ namespace Autocomplete
     {
         private TextPattern textPattern;
         private AutomationElement activeWindow;
+        public HashSet<int> ignorehandles;
         public void ReplaceWord(string text,TextPatternRange rangeToReplace)
         {
             int start = GetRangeIndex(rangeToReplace);
@@ -37,6 +38,7 @@ namespace Autocomplete
         public AppReadWriter()
         {
             activeWindow = null;
+            ignorehandles = new HashSet<int>();
             AutomationFocusChangedEventHandler focusHandler = new AutomationFocusChangedEventHandler(OnFocusChange);
             Automation.AddAutomationFocusChangedEventHandler(focusHandler);
         }
@@ -44,6 +46,10 @@ namespace Autocomplete
         public event EventHandler<string> OnUneditableWindow;
         private void OnFocusChange(object src,AutomationEventArgs e)
         {
+            if (ignorehandles.Contains(AutomationElement.FocusedElement.Current.NativeWindowHandle))
+            {
+                return;
+            }
             if (activeWindow != null)
             {
                 Automation.RemoveAutomationEventHandler(TextPattern.TextSelectionChangedEvent, activeWindow, handleTextChange);

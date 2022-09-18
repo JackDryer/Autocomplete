@@ -34,6 +34,7 @@ namespace Autocomplete
             appHandler.OnTextChange += AppHandler_OnTextChange;
             //listener = new LowLevelKeyBoardListener();
             sugestionBox = new DropDown();
+            
             sugestionBox.Hide();
             trie = Trie.LoadFromFile();
             sugestionBox.OnComplete += complete;
@@ -53,6 +54,7 @@ namespace Autocomplete
         private void AppHandler_OnTextChange(object sender, string e)
         {
             sugestionBox.SetTop();
+            appHandler.ignorehandles.Add(sugestionBox.GetHandle());
             textrange = appHandler.GetActiveWord();
             if (textrange != null && textrange.GetBoundingRectangles().Count()>0 && textrange.GetText(-1).Any(x=>char.IsLetter(x)))
             {
