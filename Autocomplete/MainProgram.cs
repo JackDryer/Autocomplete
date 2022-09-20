@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
+
 namespace Autocomplete
 {
     public class MainProgram : ApplicationContext
@@ -54,7 +55,7 @@ namespace Autocomplete
         private void AppHandler_OnTextChange(object sender, string e)
         {
             sugestionBox.SetTop();
-            appHandler.ignorehandles.Add(sugestionBox.GetHandle());
+            appHandler.ignorehandles.Add(sugestionBox.GetHandle()); ;// the placement of this and settop is arbitraty but it has to go somewhere in this thread
             textrange = appHandler.GetActiveWord();
             if (textrange != null && textrange.GetBoundingRectangles().Count()>0 && textrange.GetText(-1).Any(x=>char.IsLetter(x)))
             {

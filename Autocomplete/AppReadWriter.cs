@@ -11,6 +11,7 @@ using System.Windows.Automation;
 using System.Diagnostics;
 using System.Windows.Automation.Text;
 using System.Runtime.InteropServices;
+using Word = Microsoft.Office.Interop.Word;
 
 namespace Autocomplete
 {
@@ -58,6 +59,7 @@ namespace Autocomplete
             activeWindow = AutomationElement.FocusedElement;
             string className = activeWindow.Current.ClassName;
             object textob = null;
+            
             if (activeWindow.TryGetCurrentPattern(TextPattern.Pattern, out textob))//Editables.Contains(className)
             {
                 textPattern = activeWindow.GetCurrentPattern(TextPattern.Pattern) as TextPattern;
