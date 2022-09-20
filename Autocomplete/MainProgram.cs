@@ -39,12 +39,13 @@ namespace Autocomplete
             sugestionBox.Hide();
             trie = Trie.LoadFromFile();
             sugestionBox.OnComplete += complete;
-            appHandler.OnUneditableWindow += AppHandler_OnUneditableWindow;
+            appHandler.onAppChange += AppHandler_onAppChange;
         }
 
-        private void AppHandler_OnUneditableWindow(object sender, string name)
+        private void AppHandler_onAppChange(object sender, EventArgs e)
         {
-            sugestionBox.Stop();
+            appHandler.ignorehandles.Add(sugestionBox.GetHandle());
+            sugestionBox.Stop(); 
         }
 
         void complete(object sender, string word)
@@ -55,7 +56,6 @@ namespace Autocomplete
         private void AppHandler_OnTextChange(object sender, string e)
         {
             sugestionBox.SetTop();
-            appHandler.ignorehandles.Add(sugestionBox.GetHandle()); ;// the placement of this and settop is arbitraty but it has to go somewhere in this thread
             textrange = appHandler.GetActiveWord();
             if (textrange != null && textrange.GetBoundingRectangles().Count()>0 && textrange.GetText(-1).Any(x=>char.IsLetter(x)))
             {

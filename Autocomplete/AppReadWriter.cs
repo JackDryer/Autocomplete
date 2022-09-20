@@ -45,10 +45,15 @@ namespace Autocomplete
         }
         public event EventHandler<string> OnTextChange;
         public event EventHandler<string> OnUneditableWindow;
+        public event EventHandler onAppChange;
         private void OnFocusChange(object src,AutomationEventArgs e)
         {
-            if (ignorehandles.Contains(AutomationElement.FocusedElement.Current.NativeWindowHandle))
-            {
+            //Console.WriteLine(AutomationElement.FocusedElement.Current.Name);
+            //Console.WriteLine(AutomationElement.FocusedElement.Current.NativeWindowHandle);
+            //Console.WriteLine(String.Join(",", ignorehandles));
+
+            if (ignorehandles.Contains(AutomationElement.FocusedElement.Current.NativeWindowHandle) || AutomationElement.FocusedElement ==activeWindow)
+            { 
                 return;
             }
             if (activeWindow != null)
@@ -59,7 +64,7 @@ namespace Autocomplete
             activeWindow = AutomationElement.FocusedElement;
             string className = activeWindow.Current.ClassName;
             object textob = null;
-            
+            onAppChange?.Invoke(this, new EventArgs());
             if (activeWindow.TryGetCurrentPattern(TextPattern.Pattern, out textob))//Editables.Contains(className)
             {
                 textPattern = activeWindow.GetCurrentPattern(TextPattern.Pattern) as TextPattern;
@@ -111,19 +116,21 @@ namespace Autocomplete
 
         public TextPatternRange GetActiveWord()
         {
-            try {
+            try
+            {
                 var p = getCaretPositon();
-                var range = textPattern.RangeFromPoint(new System.Windows.Point((int)p.X, (int)p.Y-5));
+                var range = textPattern.RangeFromPoint(new System.Windows.Point((int)p.X, (int)p.Y - 5));
                 range.ExpandToEnclosingUnit(TextUnit.Word);
                 if (!range.GetText(-1).Any(x => char.IsLetter(x)))
                 {
-                    range.Move(TextUnit.Character,-1);
+                    range.Move(TextUnit.Character, -1);
                     range.ExpandToEnclosingUnit(TextUnit.Word);
                 }
                 //range.Select();
                 return range;
             }
-            catch (System.ArgumentException) { return null; }
+            catch (System.ArgumentException) { 
+                return null; }
         }
         private void handleTextChange(object src, AutomationEventArgs e)
         {
