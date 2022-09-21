@@ -21,16 +21,32 @@ namespace Autocomplete
         Word,
         All
     }
+    public enum ActiveApplicationLike
+    {
+        Notepad,
+        Word
+    }
     class AppReadWriter
     {
         private TextPattern textPattern;
         private AutomationElement activeWindow;
+        private ActiveApplicationLike activeApplicationLike;
         public HashSet<int> ignorehandles;
+        Word.Application objWord;
         public void ReplaceWord(string text,TextPatternRange rangeToReplace)
         {
             int start = GetRangeIndex(rangeToReplace);
             int end = start + rangeToReplace.GetText(-1).Length;
-            ReplaceTextUsingDll(activeWindow,start,end,text);
+            switch (activeApplicationLike)
+            {
+                case ActiveApplicationLike.Word:
+                    objWord.Selection.InsertAfter(text);
+                    break;
+                case ActiveApplicationLike.Notepad:
+                    ReplaceTextUsingDll(activeWindow, start, end, text);
+                    break;
+            }
+            
         }
         public int GetRangeIndex(TextPatternRange range)
         {
@@ -51,7 +67,7 @@ namespace Autocomplete
             //Console.WriteLine(AutomationElement.FocusedElement.Current.Name);
             //Console.WriteLine(AutomationElement.FocusedElement.Current.NativeWindowHandle);
             //Console.WriteLine(String.Join(",", ignorehandles));
-
+            //Console.WriteLine(Process.GetProcessById(AutomationElement.FocusedElement.Current.ProcessId).ProcessName);
             if (ignorehandles.Contains(AutomationElement.FocusedElement.Current.NativeWindowHandle) || AutomationElement.FocusedElement ==activeWindow)
             { 
                 return;
@@ -64,7 +80,17 @@ namespace Autocomplete
             activeWindow = AutomationElement.FocusedElement;
             string className = activeWindow.Current.ClassName;
             object textob = null;
-            onAppChange?.Invoke(this, new EventArgs());
+            if (Process.GetProcessById(activeWindow.Current.ProcessId).ProcessName=="WINWORD")
+            {
+                objWord = Marshal.GetActiveObject("Word.Application") as Word.Application;
+                objWord.ActiveDocument.ContentControlAfterAdd /////////;
+                activeApplicationLike = ActiveApplicationLike.Word;
+
+            }
+            else
+            {
+                activeApplicationLike = ActiveApplicationLike.Notepad;
+            }
             if (activeWindow.TryGetCurrentPattern(TextPattern.Pattern, out textob))//Editables.Contains(className)
             {
                 textPattern = activeWindow.GetCurrentPattern(TextPattern.Pattern) as TextPattern;
@@ -74,6 +100,7 @@ namespace Autocomplete
             {
                 OnUneditableWindow?.Invoke(this, className);
             }
+            onAppChange?.Invoke(this, new EventArgs());
         }
         [DllImport("user32.dll", SetLastError = true)]
         private static extern bool GetGUIThreadInfo(uint hTreadID, ref GUITHREADINFO lpgui);
