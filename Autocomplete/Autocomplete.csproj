@@ -80,6 +80,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AppReadWriter.cs" />
+    <Compile Include="WindowsInterface.cs" />
     <Compile Include="BinaryHeap.cs" />
     <Compile Include="DropDown.cs">
       <SubType>Form</SubType>

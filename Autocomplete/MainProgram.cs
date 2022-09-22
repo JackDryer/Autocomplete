@@ -39,7 +39,7 @@ namespace Autocomplete
             sugestionBox.Hide();
             trie = Trie.LoadFromFile();
             sugestionBox.OnComplete += complete;
-            appHandler.onAppChange += AppHandler_onAppChange;
+            appHandler.OnAppChange += AppHandler_onAppChange;
         }
 
         private void AppHandler_onAppChange(object sender, EventArgs e)
@@ -53,9 +53,9 @@ namespace Autocomplete
             appHandler.ReplaceWord(word,textrange);
         }
 
-        private void AppHandler_OnTextChange(object sender, string e)
+        private void AppHandler_OnTextChange(object sender, EventArgs e)
         {
-            sugestionBox.SetTop();
+            //sugestionBox.SetTop();
             textrange = appHandler.GetActiveWord();
             if (textrange != null && textrange.GetBoundingRectangles().Count()>0 && textrange.GetText(-1).Any(x=>char.IsLetter(x)))
             {
