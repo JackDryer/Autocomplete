@@ -8,7 +8,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Automation;
-using System.Diagnostics;
 using System.Windows.Automation.Text;
 using System.Runtime.InteropServices;
 
@@ -20,11 +19,9 @@ namespace Autocomplete
         Word,
         All
     }
-    class WindowsInterface
+    class WindowsInterface : ApplicationListener
     {
         private TextPattern textPattern;
-        private AutomationElement activeWindow;
-        public HashSet<int> ignorehandles;
 
         public void ReplaceWord(string text,TextPatternRange rangeToReplace)
         {
@@ -36,29 +33,18 @@ namespace Autocomplete
         {
             return range.CompareEndpoints(TextPatternRangeEndpoint.Start, textPattern.DocumentRange, TextPatternRangeEndpoint.Start);
         }
-        public WindowsInterface()
-        {
-            activeWindow = null;
-            ignorehandles = new HashSet<int>();
-            AutomationFocusChangedEventHandler focusHandler = new AutomationFocusChangedEventHandler(OnFocusChange);
-            Automation.AddAutomationFocusChangedEventHandler(focusHandler);
-
-        }
-
 
         public event EventHandler<string> OnTextChange;
-        public event EventHandler<string> OnUneditableWindow;
-        public event EventHandler OnAppChange;
-        private void OnFocusChange(object src,AutomationEventArgs e)
+        public void Unlatch()
         {
-            //Console.WriteLine(AutomationElement.FocusedElement.Current.Name);
-            //Console.WriteLine(AutomationElement.FocusedElement.Current.NativeWindowHandle);
-            //Console.WriteLine(String.Join(",", ignorehandles));
-            //Console.WriteLine(Process.GetProcessById(AutomationElement.FocusedElement.Current.ProcessId).ProcessName);
-            if (ignorehandles.Contains(AutomationElement.FocusedElement.Current.NativeWindowHandle) || AutomationElement.FocusedElement ==activeWindow)
-            { 
-                return;
+            if (activeWindow != null)
+            {
+                Automation.RemoveAutomationEventHandler(TextPattern.TextSelectionChangedEvent, activeWindow, handleTextChange);
+                activeWindow = null;
             }
+        }
+        public void Latch()
+        {
             if (activeWindow != null)
             {
                 Automation.RemoveAutomationEventHandler(TextPattern.TextSelectionChangedEvent, activeWindow, handleTextChange);
@@ -67,27 +53,10 @@ namespace Autocomplete
             activeWindow = AutomationElement.FocusedElement;
             string className = activeWindow.Current.ClassName;
             object textob = null;
- 
             if (activeWindow.TryGetCurrentPattern(TextPattern.Pattern, out textob))//Editables.Contains(className)
             {
                 textPattern = activeWindow.GetCurrentPattern(TextPattern.Pattern) as TextPattern;
                 Automation.AddAutomationEventHandler(TextPattern.TextSelectionChangedEvent, activeWindow, TreeScope.Element, handleTextChange);
-            }
-            else
-            {
-                OnUneditableWindow?.Invoke(this, className);
-            }
-            onAppChange?.Invoke(this, new EventArgs());
-        }
-        public ActiveApplicationLike GetActiveType()
-        {
-            if (Process.GetProcessById(activeWindow.Current.ProcessId).ProcessName == "WINWORD")
-            {
-                return ActiveApplicationLike.Word;
-            }
-            else
-            {
-                return ActiveApplicationLike.Notepad;
             }
         }
         [DllImport("user32.dll", SetLastError = true)]
