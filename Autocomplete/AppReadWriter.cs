@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,8 +13,10 @@ namespace Autocomplete
         Notepad,
         Word
     }
+
     internal class AppReadWriter
     {
+        private ApplicationListener Listener;
         private Word.Application objWord;
         private ActiveApplicationLike activeApplicationLike;
 
@@ -21,10 +24,10 @@ namespace Autocomplete
         private WindowsInterface windowsInterface;
 
         public event EventHandler OnTextChange;
-        public event EventHandler<string> OnUneditableWindow;
-        public event EventHandler OnAppChange { add => windowsInterface.OnAppChange+=value; remove => windowsInterface.OnAppChange -=value; }
 
-        public HashSet<int> ignorehandles { get => windowsInterface.ignorehandles; set => windowsInterface.ignorehandles =value; }
+        public event EventHandler<string> OnUneditableWindow;
+        public event EventHandler OnAppChange { add => Listener.OnAppChange+=value; remove => Listener.OnAppChange -=value; }
+        public HashSet<int> ignorehandles { get => Listener.ignorehandles; set => Listener.ignorehandles =value; }
         public void ReplaceWord(string text, TextPatternRange rangeToReplace)
         {
             switch (activeApplicationLike)
@@ -33,7 +36,7 @@ namespace Autocomplete
                     objWord.Selection.InsertAfter(text);
                     break;
                 case ActiveApplicationLike.Notepad:
-
+                    windowsInterface.ReplaceWord(text, rangeToReplace);
                     break;
             }
         }
@@ -42,8 +45,23 @@ namespace Autocomplete
             lowListener = new LowLevelKeyBoardListener();
             lowListener.OnKeyPressed += LowListener_OnKeyPressed;
             lowListener.HookKeyboard();
-            windowsInterface = new WindowsInterface();
+            Listener = new ApplicationListener();
+            Listener.OnAppChange += Listener_OnAppChange;
+
             windowsInterface.OnTextChange += WindowsInterface_OnTextChange;
+        }
+
+        private void Listener_OnAppChange(object sender, EventArgs e)
+        {
+
+            if (Process.GetProcessById(Listener.GetProcessId()).ProcessName == "WINWORD")
+            {
+                return ActiveApplicationLike.Word;
+            }
+            else
+            {
+                return ActiveApplicationLike.Notepad;
+            }
         }
 
         private void WindowsInterface_OnTextChange(object sender, string e)
