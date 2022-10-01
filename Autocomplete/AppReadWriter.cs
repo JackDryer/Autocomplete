@@ -13,7 +13,10 @@ namespace Autocomplete
         Notepad,
         Word
     }
+    public class ThreadSafeEventHandler : EventHandler
+    {
 
+    }
     internal class AppReadWriter
     {
         private ApplicationListener Listener;
@@ -28,6 +31,8 @@ namespace Autocomplete
         public event EventHandler<string> OnUneditableWindow;
         public event EventHandler OnAppChange { add => Listener.OnAppChange+=value; remove => Listener.OnAppChange -=value; }
         public HashSet<int> ignorehandles { get => Listener.ignorehandles; set => Listener.ignorehandles =value; }
+
+        public Func<TextPatternRange> GetActiveWord;
         public void ReplaceWord(string text, TextPatternRange rangeToReplace)
         {
             switch (activeApplicationLike)
@@ -56,11 +61,15 @@ namespace Autocomplete
 
             if (Process.GetProcessById(Listener.GetProcessId()).ProcessName == "WINWORD")
             {
-                return ActiveApplicationLike.Word;
+                // app is like word
+                windowsInterface.Latch();
+                this.GetActiveWord = windowsInterface.GetActiveWord;
             }
             else
             {
-                return ActiveApplicationLike.Notepad;
+                // app is like notepad
+                windowsInterface.Latch();
+                this.GetActiveWord = windowsInterface.GetActiveWord;
             }
         }
 
@@ -78,10 +87,6 @@ namespace Autocomplete
             {
                 OnTextChange?.Invoke(this, new EventArgs());
             }
-        }
-        public TextPatternRange GetActiveWord()
-        {
-            return windowsInterface.GetActiveWord();
         }
     }
 }

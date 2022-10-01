@@ -39,7 +39,7 @@ namespace Autocomplete
             OnAppChange?.Invoke(this, new EventArgs());
         }
         public int GetProcessId()
-        {
+        { 
             return activeWindow.Current.ProcessId;
         }
 
