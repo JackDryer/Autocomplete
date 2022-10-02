@@ -79,9 +79,11 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ApplicationListener.cs" />
-    <Compile Include="AppReadWriter.cs" />
-    <Compile Include="WindowsInterface.cs" />
+    <Compile Include="API\ApplicationListener.cs" />
+    <Compile Include="API\AppReadWriter.cs" />
+    <Compile Include="API\SafetTriggerExtensions.cs" />
+    <Compile Include="API\TypingListener.cs" />
+    <Compile Include="API\WindowsInterface.cs" />
     <Compile Include="BinaryHeap.cs" />
     <Compile Include="DropDown.cs">
       <SubType>Form</SubType>

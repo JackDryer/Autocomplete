@@ -34,7 +34,7 @@ namespace Autocomplete
             return range.CompareEndpoints(TextPatternRangeEndpoint.Start, textPattern.DocumentRange, TextPatternRangeEndpoint.Start);
         }
 
-        public event EventHandler<string> OnTextChange;
+        public event EventHandler OnTextChange;
         public void Unlatch()
         {
             if (activeWindow != null)
@@ -42,13 +42,13 @@ namespace Autocomplete
                 Automation.RemoveAutomationEventHandler(TextPattern.TextSelectionChangedEvent, activeWindow, handleTextChange);
                 activeWindow = null;
             }
+            OnTextChange = null;
         }
         public void Latch()
         {
             if (activeWindow != null)
             {
-                Automation.RemoveAutomationEventHandler(TextPattern.TextSelectionChangedEvent, activeWindow, handleTextChange);
-                activeWindow = null;
+                throw new Exception("Not unlatched");
             }
             activeWindow = AutomationElement.FocusedElement;
             string className = activeWindow.Current.ClassName;
@@ -119,7 +119,7 @@ namespace Autocomplete
         private void handleTextChange(object src, AutomationEventArgs e)
         {
             string text = textPattern.DocumentRange.GetText(-1);
-            OnTextChange?.Invoke(this, text);
+            OnTextChange?.Invoke(this, new EventArgs());
         }
         const int WM_SETTEXT = 0x000C;
 

@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Automation.Text;
 using Word = Microsoft.Office.Interop.Word;
+
 namespace Autocomplete
 {
     public enum ActiveApplicationLike
@@ -13,80 +15,55 @@ namespace Autocomplete
         Notepad,
         Word
     }
-    public class ThreadSafeEventHandler : EventHandler
-    {
-
-    }
     internal class AppReadWriter
     {
         private ApplicationListener Listener;
         private Word.Application objWord;
-        private ActiveApplicationLike activeApplicationLike;
 
-        private LowLevelKeyBoardListener lowListener;
+        private TypingListener typingListener;
         private WindowsInterface windowsInterface;
 
         public event EventHandler OnTextChange;
 
-        public event EventHandler<string> OnUneditableWindow;
+        // these 3 events are to do with when the app focus changes, this is not the job of this class
+        public event EventHandler<string> OnUneditableWindow { add => Listener.OnUneditableWindow += value; remove => Listener.OnUneditableWindow -= value; }
         public event EventHandler OnAppChange { add => Listener.OnAppChange+=value; remove => Listener.OnAppChange -=value; }
         public HashSet<int> ignorehandles { get => Listener.ignorehandles; set => Listener.ignorehandles =value; }
 
         public Func<TextPatternRange> GetActiveWord;
-        public void ReplaceWord(string text, TextPatternRange rangeToReplace)
-        {
-            switch (activeApplicationLike)
-            {
-                case ActiveApplicationLike.Word:
-                    objWord.Selection.InsertAfter(text);
-                    break;
-                case ActiveApplicationLike.Notepad:
-                    windowsInterface.ReplaceWord(text, rangeToReplace);
-                    break;
-            }
-        }
+        public Action<string, TextPatternRange> ReplaceWord; //(string text, TextPatternRange rangeToReplace)
+
         public AppReadWriter()
         {
-            lowListener = new LowLevelKeyBoardListener();
-            lowListener.OnKeyPressed += LowListener_OnKeyPressed;
-            lowListener.HookKeyboard();
+            windowsInterface = new WindowsInterface();
+            typingListener = new TypingListener();
             Listener = new ApplicationListener();
             Listener.OnAppChange += Listener_OnAppChange;
-
-            windowsInterface.OnTextChange += WindowsInterface_OnTextChange;
         }
 
         private void Listener_OnAppChange(object sender, EventArgs e)
         {
-
+            typingListener.Unlatch();
+            windowsInterface.Unlatch();
             if (Process.GetProcessById(Listener.GetProcessId()).ProcessName == "WINWORD")
             {
                 // app is like word
                 windowsInterface.Latch();
+                objWord = Marshal.GetActiveObject("Word.Application") as Word.Application; //equivilent to latch
                 this.GetActiveWord = windowsInterface.GetActiveWord;
+                this.ReplaceWord= (x,y)=> { objWord.Selection.InsertAfter(x); };
+                typingListener.OnTextChange += OnTextChange;
+                
             }
             else
             {
                 // app is like notepad
                 windowsInterface.Latch();
                 this.GetActiveWord = windowsInterface.GetActiveWord;
+                this.ReplaceWord = windowsInterface.ReplaceWord;
+                windowsInterface.OnTextChange += OnTextChange;
             }
         }
 
-        private void WindowsInterface_OnTextChange(object sender, string e)
-        {
-            if (activeApplicationLike == ActiveApplicationLike.Notepad)
-            {
-                OnTextChange?.Invoke(this, new EventArgs());
-            }
-        }
-
-        private void LowListener_OnKeyPressed(object sender, KeyPressedArgs e)
-        {
-            if (activeApplicationLike == ActiveApplicationLike.Word)
-            {
-                OnTextChange?.Invoke(this, new EventArgs());
-            }
-        }
     }
 }
