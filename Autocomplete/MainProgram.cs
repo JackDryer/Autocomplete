@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 
@@ -35,8 +32,8 @@ namespace Autocomplete
             appHandler.OnTextChange += AppHandler_OnTextChange;
             //listener = new LowLevelKeyBoardListener();
             sugestionBox = new DropDown();
-            
-            sugestionBox.Hide();
+            sugestionBox.Start();
+            sugestionBox.Stop();
             trie = Trie.LoadFromFile();
             sugestionBox.OnComplete += complete;
             appHandler.OnAppChange += AppHandler_onAppChange;
@@ -44,18 +41,36 @@ namespace Autocomplete
 
         private void AppHandler_onAppChange(object sender, EventArgs e)
         {
+            if (this.sugestionBox.InvokeRequired)
+            {
+                if (!this.sugestionBox.IsDisposed)
+                {
+                    AppHandler_OnTextChangeCallback d = new AppHandler_OnTextChangeCallback(AppHandler_onAppChange);
+                    sugestionBox.Invoke(d, new object[] { sender, e });
+                }
+                return;
+            }
             appHandler.ignorehandles.Add(sugestionBox.GetHandle());
-            sugestionBox.Stop(); 
+            sugestionBox.Stop();
         }
 
         void complete(object sender, string word)
         {
             appHandler.ReplaceWord(word,textrange);
         }
-
+        private delegate void AppHandler_OnTextChangeCallback(object sender, EventArgs e);
         private void AppHandler_OnTextChange(object sender, EventArgs e)
         {
             //sugestionBox.SetTop();
+            if (this.sugestionBox.InvokeRequired)
+            {
+                if (!this.sugestionBox.IsDisposed)
+                {
+                    AppHandler_OnTextChangeCallback d = new AppHandler_OnTextChangeCallback(AppHandler_OnTextChange);
+                    sugestionBox.Invoke(d, new object[] {sender,e});
+                }
+                return;
+            }
             textrange = appHandler.GetActiveWord();
             if (textrange != null && textrange.GetBoundingRectangles().Count()>0 && textrange.GetText(-1).Any(x=>char.IsLetter(x)))
             {
@@ -63,8 +78,10 @@ namespace Autocomplete
                 string word = textrange.GetText(-1);
                 sugestionBox.Left = (int)loc.X;
                 sugestionBox.Top = (int)loc.Y;
+                if (word == null)
+                    MessageBox.Show("word was null");
                 List<string> values = trie.GetCompletions(word, 10, 1E-307);// tested to 1E-324, minimum value of a float is ~ 2E-308
-                 sugestionBox.suggestions = values;
+                sugestionBox.suggestions = values;
                 //sugestionBox.UpdateContents();
                 sugestionBox.Start();
             }

@@ -81,7 +81,6 @@
   <ItemGroup>
     <Compile Include="API\ApplicationListener.cs" />
     <Compile Include="API\AppReadWriter.cs" />
-    <Compile Include="API\SafetTriggerExtensions.cs" />
     <Compile Include="API\TypingListener.cs" />
     <Compile Include="API\WindowsInterface.cs" />
     <Compile Include="BinaryHeap.cs" />

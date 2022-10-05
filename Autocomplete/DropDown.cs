@@ -44,6 +44,7 @@ namespace Autocomplete
             listener.AddEventOnce("Down", bellowOption);
             listener.blockKeys.Add("Escape");
             listener.AddEventOnce("Escape", Stop);
+            //listener.blockKeys.Add("D");
             listener.HookKeyboard();
         }
         public void Stop()
@@ -111,7 +112,9 @@ namespace Autocomplete
         }
         void OnKeyPressed(object sender, KeyPressedArgs e)
         {
-            //suggestions.Add(e.KeyPressed.ToString());
+            if (listener.blockKeys.Contains(e.KeyPressed.ToString()))
+                MessageBox.Show("blcoked");
+            Console.WriteLine(e.KeyPressed.ToString());
             //UpdateContents();
             //MessageBox.Show(e.KeyPressed.ToString());
         }
