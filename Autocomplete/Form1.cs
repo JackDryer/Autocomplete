@@ -16,6 +16,7 @@ namespace Autocomplete
         public Form1()
         {
             InitializeComponent();
+            //colorDialog1.ShowDialog();
 
         }
     }

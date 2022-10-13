@@ -77,3 +77,6 @@ U:\Source\Autocomplete\Autocomplete\Autocomplete\obj\Debug\Autocomplete.csproj.G
 U:\Source\Autocomplete\Autocomplete\Autocomplete\obj\Debug\Autocomplete.csproj.CoreCompileInputs.cache
 U:\Source\Autocomplete\Autocomplete\Autocomplete\obj\Debug\Autocomplete.exe
 U:\Source\Autocomplete\Autocomplete\Autocomplete\obj\Debug\Autocomplete.pdb
+U:\Source\Autocomplete\Autocomplete\Autocomplete\bin\Debug\Autocomplete.exe.config
+U:\Source\Autocomplete\Autocomplete\Autocomplete\bin\Debug\Autocomplete.exe
+U:\Source\Autocomplete\Autocomplete\Autocomplete\bin\Debug\Autocomplete.pdb

@@ -1,9 +1,11 @@
-﻿using System;
+﻿using Microsoft.Office.Interop.Word;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Automation.Text;
 using Word = Microsoft.Office.Interop.Word;
@@ -40,7 +42,20 @@ namespace Autocomplete
             Listener = new ApplicationListener();
             Listener.OnAppChange += Listener_OnAppChange;
         }
-
+        private void InsertWindows(string word, TextPatternRange range)
+        {
+            Thread thread = new Thread(() => {
+                objWord.ScreenUpdating = false; // more astheticaly pleasing
+                var rangetoreplace = objWord.Selection.Previous();
+                rangetoreplace.Expand(WdUnits.wdWord);
+                rangetoreplace.Delete();
+                objWord.Selection.InsertAfter(word);
+                objWord.Selection.Collapse(WdCollapseDirection.wdCollapseEnd);
+                objWord.ScreenUpdating = true;
+            });
+            thread.SetApartmentState(ApartmentState.STA);
+            thread.Start();
+        }
         private void Listener_OnAppChange(object sender, EventArgs e)
         {
             typingListener.Unlatch();
@@ -51,7 +66,7 @@ namespace Autocomplete
                 windowsInterface.Latch();
                 objWord = Marshal.GetActiveObject("Word.Application") as Word.Application; //equivilent to latch
                 this.GetActiveWord = windowsInterface.GetActiveWord;
-                this.ReplaceWord= (x,y)=> { objWord.Selection.InsertAfter(x); };
+                this.ReplaceWord = InsertWindows;
                 typingListener.OnTextChange += OnTextChange;
                 
             }

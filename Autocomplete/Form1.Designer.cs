@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.InputBox = new System.Windows.Forms.RichTextBox();
+            this.colorDialog1 = new System.Windows.Forms.ColorDialog();
             this.SuspendLayout();
             // 
             // InputBox
@@ -40,6 +41,10 @@
             this.InputBox.TabIndex = 0;
             this.InputBox.Text = "Autocomplete:\nto complete a word either click the word or\nselect the word with th" +
     "e up and down keys\nenter the selected word with tab";
+            // 
+            // colorDialog1
+            // 
+            this.colorDialog1.FullOpen = true;
             // 
             // Form1
             // 
@@ -57,6 +62,7 @@
         #endregion
 
         private System.Windows.Forms.RichTextBox InputBox;
+        private System.Windows.Forms.ColorDialog colorDialog1;
     }
 }
 

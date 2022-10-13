@@ -61,7 +61,6 @@ namespace Autocomplete
         private delegate void AppHandler_OnTextChangeCallback(object sender, EventArgs e);
         private void AppHandler_OnTextChange(object sender, EventArgs e)
         {
-            //sugestionBox.SetTop();
             if (this.sugestionBox.InvokeRequired)
             {
                 if (!this.sugestionBox.IsDisposed)
@@ -71,6 +70,7 @@ namespace Autocomplete
                 }
                 return;
             }
+            //sugestionBox.SetTop();
             textrange = appHandler.GetActiveWord();
             if (textrange != null && textrange.GetBoundingRectangles().Count()>0 && textrange.GetText(-1).Any(x=>char.IsLetter(x)))
             {
