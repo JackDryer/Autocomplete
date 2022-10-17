@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Autocomplete
@@ -21,15 +22,25 @@ namespace Autocomplete
 
         private void LowLevel_OnKeyPressed(object sender, KeyPressedArgs e)
         {
-            if (e.ToString() == " ")
+            if (e.KeyPressed.ToString() == " ")
             {
                 currentWord = "";
             }
-            else if (e.ToString().Length == 1)
+            else if (e.KeyPressed.ToString() == "Back")
             {
-                currentWord+=e.ToString();
+                currentWord = currentWord.Substring(0, currentWord.Length - 1);
             }
-            OnTextChange?.Invoke(this, e);
+            else if (e.KeyPressed.ToString().Length == 1)
+            {
+                currentWord+=e.KeyPressed.ToString();
+            }
+            Thread thread = new Thread(() => { // in new thread so that program the user is typing into can recive the character pressed before this program reads it
+                Thread.Sleep(1);
+                OnTextChange?.Invoke(this, e);
+
+            });
+            thread.Start();
+            
         }
 
         public string GetActiveWord()
