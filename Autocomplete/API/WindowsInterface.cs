@@ -23,7 +23,6 @@ namespace Autocomplete
     {
         private TextPattern textPattern;
 
-        Word.Application objWord;
         public void ReplaceWord(string text,TextPatternRange rangeToReplace)
         {
             int start = GetRangeIndex(rangeToReplace);
