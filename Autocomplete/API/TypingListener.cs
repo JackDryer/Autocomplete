@@ -21,16 +21,16 @@ namespace Autocomplete
         }
 
         private void LowLevel_OnKeyPressed(object sender, KeyPressedArgs e)
-        {
+        { 
             if (e.KeyPressed.ToString() == " ")
             {
                 currentWord = "";
             }
-            else if (e.KeyPressed.ToString() == "Back")
-            {
-                currentWord = currentWord.Substring(0, currentWord.Length - 1);
-            }
-            else if (e.KeyPressed.ToString().Length == 1)
+            //else if (e.KeyPressed.ToString() == "Back")
+            //{
+            //    currentWord = currentWord.Substring(0, currentWord.Length - 1);
+            //}
+            else if (e.KeyPressed.ToString().Length == 1) 
             {
                 currentWord+=e.KeyPressed.ToString();
             }
