@@ -45,7 +45,8 @@ namespace Autocomplete
             listener.blockKeys.Add("Escape");
             listener.AddEventOnce("Escape", Stop);
             //listener.blockKeys.Add("D");
-            listener.HookKeyboard();
+            if (!listener.Hooked) // 
+                listener.HookKeyboard();
         }
         public void Stop()
         {
@@ -58,7 +59,8 @@ namespace Autocomplete
             listener.RemoveEvent("Down");
             listener.blockKeys.Remove("Escape");
             listener.RemoveEvent("Escape");
-            listener.UnHookKeyboard();
+            if (listener.Hooked)
+                listener.UnHookKeyboard();
         }
         void Stop (object sender, EventArgs e)
         {

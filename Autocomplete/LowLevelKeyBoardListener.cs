@@ -31,6 +31,7 @@ namespace Autocomplete
                 namedEvents[keyname] = func;
             }
         }
+        public bool Hooked { get; private set;}
         public void RemoveEvent(string keyname) { namedEvents.Remove(keyname); }
         [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         private static extern IntPtr SetWindowsHookEx(int idHook, LowLevelKeyboardProc lpfn, IntPtr hMod, uint dwThreadId);
@@ -61,12 +62,20 @@ namespace Autocomplete
 
         public void HookKeyboard()
         {
-            _hookID = SetHook(_proc);
+            if (!this.Hooked)
+            {
+                _hookID = SetHook(_proc);
+                Hooked = true;
+            }
         }
 
         public void UnHookKeyboard()
         {
-            UnhookWindowsHookEx(_hookID);
+            if (this.Hooked)
+            {
+                UnhookWindowsHookEx(_hookID);
+                Hooked = false;
+            }
         }
         private IntPtr SetHook(LowLevelKeyboardProc proc)
         {
@@ -83,7 +92,6 @@ namespace Autocomplete
             {
                 int vkCode = Marshal.ReadInt32(lParam);
                 var keyob = KeyInterop.KeyFromVirtualKey(vkCode);
-
                 OnKeyPressed?.Invoke(this, new KeyPressedArgs(keyob));
 
                 if (namedEvents.ContainsKey(keyob.ToString()))
