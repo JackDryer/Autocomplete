@@ -115,6 +115,10 @@ namespace Autocomplete
             }
             catch (System.ArgumentException) { 
                 return null; }
+            catch (COMException)
+            {
+                return null;
+            }
         }
         private void handleTextChange(object src, AutomationEventArgs e)
         {
