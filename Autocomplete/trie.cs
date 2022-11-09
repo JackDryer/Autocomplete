@@ -153,7 +153,8 @@ namespace Autocomplete
         }
         double getKeyProbability(char targetkey, char referancekey,string nearkeys = "")
         {
-            if (targetkey == referancekey) return MATCH;
+            if (char.ToLower(targetkey) == char.ToLower(referancekey)) return MATCH;
+            if (targetkey == '\'') return MATCH; // noone ever types these
             else if (nearkeys.Contains(targetkey)) return NEAR;
             else return WRONG;
         }
