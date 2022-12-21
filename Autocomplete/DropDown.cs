@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -13,6 +15,13 @@ namespace Autocomplete
 
     public partial class DropDown : Form
     {
+        private decimal textSize;
+        private Color textColour;
+        private Color backgroundColour;
+        private Color highlightColour;
+        private Color highlightBackgroundColour;
+        private Color mouseHighlightColour= Color.IndianRed;
+        
         protected override bool ShowWithoutActivation
         {
             get { return true; }
@@ -96,7 +105,7 @@ namespace Autocomplete
                 SetText(outtext);
                 wordsBox.SelectionStart = start;
                 wordsBox.SelectionLength = range;
-                wordsBox.SelectionColor = Color.Red;
+                wordsBox.SelectionColor = highlightColour;
                 oldSelection[0] = 0;
                 oldSelection[1] = 0;
             }
@@ -115,7 +124,7 @@ namespace Autocomplete
         void OnKeyPressed(object sender, KeyPressedArgs e)
         {
             if (listener.blockKeys.Contains(e.KeyPressed.ToString()))
-                MessageBox.Show("blcoked");
+                MessageBox.Show("blocked");
             Console.WriteLine(e.KeyPressed.ToString());
             //UpdateContents();
             //MessageBox.Show(e.KeyPressed.ToString());
@@ -145,6 +154,7 @@ namespace Autocomplete
             InitializeComponent();
             _suggestions = new List<string>();
             selectedIndex = 0;
+            LoadSettings();
             listener = new LowLevelKeyBoardListener();
             SetStyle(ControlStyles.Selectable, false);
             //listener.OnKeyPressed += OnKeyPressed;
@@ -177,7 +187,7 @@ namespace Autocomplete
         {
             wordsBox.SelectionStart = oldSelection[0];
             wordsBox.SelectionLength = oldSelection[1];
-            wordsBox.SelectionColor = Color.Black;
+            wordsBox.SelectionColor = textColour;
             var p = new Point(MousePosition.X - Left, MousePosition.Y - Top);
             int selected = wordsBox.GetCharIndexFromPosition(p);
             int end = wordsBox.Text.IndexOf('\n', selected);
@@ -187,7 +197,7 @@ namespace Autocomplete
             {
                 wordsBox.SelectionStart = start;
                 wordsBox.SelectionLength = end - start;
-                wordsBox.SelectionColor = Color.IndianRed;
+                wordsBox.SelectionColor = mouseHighlightColour;
                 oldSelection[0] = start;
                 oldSelection[1] = end - start;
             }
@@ -207,6 +217,20 @@ namespace Autocomplete
         private void wordsBox_Click(object sender, EventArgs e)
         {
             OnComplete?.Invoke(this, wordsBox.Text.Substring(oldSelection[0], oldSelection[1]));
+        }
+        public void LoadSettings()
+        {
+            string fileName = "settings.json";
+            string jsonString = File.ReadAllText(fileName);
+            Console.WriteLine(jsonString);
+            Settings settings = JsonSerializer.Deserialize<Settings>(jsonString);
+            Console.WriteLine(settings.textColour.ToString());
+            this.textSize = settings.textSize;
+            this.textColour = Color.FromArgb(settings.textColour);
+            this.highlightColour = Color.FromArgb(settings.highlightColour);
+            this.backgroundColour = Color.FromArgb(settings.backgroundColour);
+            this.highlightBackgroundColour = Color.FromArgb(settings.highlightBackgroundColour);
+            
         }
     }
 }

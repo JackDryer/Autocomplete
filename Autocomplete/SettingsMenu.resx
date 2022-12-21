@@ -117,7 +117,30 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <metadata name="colorDialog1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 34</value>
+  <metadata name="fontDialog1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>138, 34</value>
   </metadata>
+  <metadata name="colorDialog1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>31, 33</value>
+  </metadata>
+  <metadata name="wordsBox.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        AAABAAEAQEAAAAEAIACBAgAAFgAAAIlQTkcNChoKAAAADUlIRFIAAABAAAAAQAgDAAAAnbeB7AAAAAFz
+        UkdCAdnJLH8AAAAJcEhZcwAACxMAAAsTAQCanBgAAAC9UExURQAAAKqqqgAAAHt7e4+Pj1VVVX9/fyEh
+        IXx8fM7OzuXl5cbGxg4ODjk5ObS0tF5eXg0NDUNDQ5ycnICAgAoKCiAgINHR0cnJyRwcHBISEsPDwzY2
+        Njw8PH19fY6OjgICAh0dHePj4yUlJe7u7jIyMnBwcIqKiujo6CcnJwUFBRQUFBsbG+Dg4EtLS2RkZC8v
+        L+zs7K6urpubm9vb201NTUxMTAcHB6WlpT4+Ps3NzSkpKRMTEwMDAxkZGU9PT6zIEvgAAAA/dFJOUwD/
+        //////////+g/////////////////////////////8D/EP///3D/////8P///zD/////////////////
+        /+7uT5gAAAESSURBVHic7dbJUsJAEAbgthHQJGwiMiAQkFVBVNxlef/HogIhdjLDkAkHOPR/S9ffX6om
+        OQzAJhdonhSQXCYA0hTInBxIbWfZq2vrf2g7fjVHmla+UNxOSxRIexPnBkJRAl7Kt9LUAyp3kd5eAKpC
+        AdTq0dp+AOo1xHs6aCA2pZYGgJaL7Q55zuGDJZV0QLcXBfpySQfAIAQMR495Q8B2nsihd9rjiSEwHDk2
+        BdQv0QBQosBk/GwMTCmgjh6IEQYYYIABBhhggAEGzhp4eT0SCN3LDfLm+oDqIh0nM38fD19q1ZnuAJwl
+        2n+vBMBHkv3uZ7CPXwPz/e8skrg/1firv39CzFHKYinEKhYQfH45il9yDZW0GW6zlQ3QAAAAAElFTkSu
+        QmCC
+</value>
+  </data>
 </root>
