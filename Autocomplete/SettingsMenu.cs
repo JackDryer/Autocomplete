@@ -2,18 +2,16 @@
 using System.Windows.Forms;
 using System.Text.Json;
 using System.IO;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using System.Drawing;
 
 namespace Autocomplete
 {
     public partial class SettingsMenu : Form
     {
-        MainProgram master;
         public SettingsMenu()
         {
             InitializeComponent();
             //colorDialog1.ShowDialog();
-
         }
         public event EventHandler AppliedSettings;
 
@@ -74,6 +72,18 @@ namespace Autocomplete
             // Update the text box color if the user clicks OK 
             if (colorDialog1.ShowDialog() == DialogResult.OK)
                 buttonHiglightBgColour.BackColor = colorDialog1.Color;
+        }
+
+        private void SettingsMenu_Load(object sender, EventArgs e)
+        {
+            string fileName = "settings.json";
+            string jsonString = File.ReadAllText(fileName);
+            Settings settings = JsonSerializer.Deserialize<Settings>(jsonString);
+            TextSizeupdown.Value =settings.textSize;
+            buttonTextColour.BackColor= Color.FromArgb(settings.textColour);
+            buttonBgColour.BackColor= Color.FromArgb(settings.backgroundColour);
+            buttonhighlightColour.BackColor= Color.FromArgb(settings.highlightColour);
+            buttonHiglightBgColour.BackColor= Color.FromArgb(settings.highlightBackgroundColour);
         }
     }
 

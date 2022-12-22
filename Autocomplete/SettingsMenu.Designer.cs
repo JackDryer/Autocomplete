@@ -309,6 +309,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "SettingsMenu";
             this.Text = "Settings";
+            this.Load += new System.EventHandler(this.SettingsMenu_Load);
             ((System.ComponentModel.ISupportInitialize)(this.TextSizeupdown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.frequncySlider)).EndInit();
             this.ResumeLayout(false);

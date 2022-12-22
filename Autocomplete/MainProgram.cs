@@ -17,17 +17,6 @@ namespace Autocomplete
         private SettingsMenu settingsMenu;
         public MainProgram()
         {
-            // Initialize Tray Icon
-            trayIcon = new NotifyIcon()
-            {
-                Icon = Properties.Resources.Autocomplete_Logo,
-                Text = "Autocomplete.exe",
-                ContextMenu = new ContextMenu(new MenuItem[] {
-                new MenuItem("Exit", Exit)
-            }),
-                Visible = true
-            };
-            trayIcon.Click += trayIcon_Click;
             // start listening for typing in other apps.
             appHandler = new AppReadWriter();
             appHandler.OnTextChange += AppHandler_OnTextChange;
@@ -39,7 +28,17 @@ namespace Autocomplete
             sugestionBox.OnComplete += complete;
             appHandler.OnAppChange += AppHandler_onAppChange;
             settingsMenu= new SettingsMenu();
-            //settingsMenu.Activated += (a, b) => { sugestionBox.LoadSettings(); };
+            // Initialize Tray Icon
+            trayIcon = new NotifyIcon()
+            {
+                Icon = Properties.Resources.Autocomplete_Logo,
+                Text = "Autocomplete.exe",
+                ContextMenu = new ContextMenu(new MenuItem[] {
+                new MenuItem("Exit", Exit)
+            }),
+                Visible = true
+            };
+            trayIcon.Click += trayIcon_Click;
         }
 
         private void AppHandler_onAppChange(object sender, EventArgs e)

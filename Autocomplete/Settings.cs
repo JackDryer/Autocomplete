@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Autocomplete
 {
-    internal class Settings
+    public class Settings
     {
         public int textColour { get; set; }
         public int backgroundColour { get; set; }

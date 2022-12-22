@@ -20,7 +20,7 @@ namespace Autocomplete
         private Color backgroundColour;
         private Color highlightColour;
         private Color highlightBackgroundColour;
-        private Color mouseHighlightColour= Color.IndianRed;
+        private Color mouseHighlightColour;//= Color.IndianRed;
         
         protected override bool ShowWithoutActivation
         {
@@ -106,6 +106,7 @@ namespace Autocomplete
                 wordsBox.SelectionStart = start;
                 wordsBox.SelectionLength = range;
                 wordsBox.SelectionColor = highlightColour;
+                wordsBox.SelectionBackColor = highlightBackgroundColour;
                 oldSelection[0] = 0;
                 oldSelection[1] = 0;
             }
@@ -188,6 +189,7 @@ namespace Autocomplete
             wordsBox.SelectionStart = oldSelection[0];
             wordsBox.SelectionLength = oldSelection[1];
             wordsBox.SelectionColor = textColour;
+            wordsBox.SelectionBackColor = backgroundColour;
             var p = new Point(MousePosition.X - Left, MousePosition.Y - Top);
             int selected = wordsBox.GetCharIndexFromPosition(p);
             int end = wordsBox.Text.IndexOf('\n', selected);
@@ -198,6 +200,7 @@ namespace Autocomplete
                 wordsBox.SelectionStart = start;
                 wordsBox.SelectionLength = end - start;
                 wordsBox.SelectionColor = mouseHighlightColour;
+                wordsBox.SelectionBackColor = highlightBackgroundColour;
                 oldSelection[0] = start;
                 oldSelection[1] = end - start;
             }
@@ -224,13 +227,20 @@ namespace Autocomplete
             string jsonString = File.ReadAllText(fileName);
             Console.WriteLine(jsonString);
             Settings settings = JsonSerializer.Deserialize<Settings>(jsonString);
-            Console.WriteLine(settings.textColour.ToString());
+            ApplySettings(settings);
+        }
+        public void ApplySettings(Settings settings)
+        {
             this.textSize = settings.textSize;
             this.textColour = Color.FromArgb(settings.textColour);
             this.highlightColour = Color.FromArgb(settings.highlightColour);
             this.backgroundColour = Color.FromArgb(settings.backgroundColour);
             this.highlightBackgroundColour = Color.FromArgb(settings.highlightBackgroundColour);
-            
+            this.wordsBox.ForeColor = this.textColour;
+            this.wordsBox.BackColor = this.backgroundColour;
+            this.mouseHighlightColour = this.highlightColour;
+            this.wordsBox.Font = new Font("Microsoft Sans Serif", (float)this.textSize);
+
         }
     }
 }
