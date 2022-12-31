@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SettingsMenu));
             this.TextSizeupdown = new System.Windows.Forms.NumericUpDown();
             this.labelTxtSize = new System.Windows.Forms.Label();
@@ -53,6 +54,8 @@
             this.ApplyButton = new System.Windows.Forms.Button();
             this.colorDialog1 = new System.Windows.Forms.ColorDialog();
             this.wordsBox = new System.Windows.Forms.RichTextBox();
+            this.frequncyToolTip = new System.Windows.Forms.ToolTip(this.components);
+            this.labelFrequencyUnits = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.TextSizeupdown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.frequncySlider)).BeginInit();
             this.SuspendLayout();
@@ -201,6 +204,7 @@
             this.frequncySlider.TabIndex = 15;
             this.frequncySlider.TickFrequency = 0;
             this.frequncySlider.TickStyle = System.Windows.Forms.TickStyle.None;
+            this.frequncySlider.Scroll += new System.EventHandler(this.frequncySlider_Scroll);
             // 
             // buttonSearch
             // 
@@ -278,11 +282,22 @@
             this.wordsBox.TabIndex = 21;
             this.wordsBox.Text = "";
             // 
+            // labelFrequencyUnits
+            // 
+            this.labelFrequencyUnits.AutoSize = true;
+            this.labelFrequencyUnits.BackColor = System.Drawing.Color.Transparent;
+            this.labelFrequencyUnits.Location = new System.Drawing.Point(24, 355);
+            this.labelFrequencyUnits.Name = "labelFrequencyUnits";
+            this.labelFrequencyUnits.Size = new System.Drawing.Size(123, 13);
+            this.labelFrequencyUnits.TabIndex = 23;
+            this.labelFrequencyUnits.Text = "(Occurrences per million)";
+            // 
             // SettingsMenu
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.labelFrequencyUnits);
             this.Controls.Add(this.ApplyButton);
             this.Controls.Add(this.wordsBox);
             this.Controls.Add(this.lableCommon);
@@ -308,6 +323,7 @@
             this.Cursor = System.Windows.Forms.Cursors.Arrow;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "SettingsMenu";
+            this.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.Text = "Settings";
             this.Load += new System.EventHandler(this.SettingsMenu_Load);
             ((System.ComponentModel.ISupportInitialize)(this.TextSizeupdown)).EndInit();
@@ -342,6 +358,8 @@
         private System.Windows.Forms.Button ApplyButton;
         private System.Windows.Forms.ColorDialog colorDialog1;
         private System.Windows.Forms.RichTextBox wordsBox;
+        private System.Windows.Forms.ToolTip frequncyToolTip;
+        private System.Windows.Forms.Label labelFrequencyUnits;
     }
 }
 

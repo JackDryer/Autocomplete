@@ -3,22 +3,52 @@ using System.Windows.Forms;
 using System.Text.Json;
 using System.IO;
 using System.Drawing;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using System.CodeDom;
 
 namespace Autocomplete
 {
     public partial class SettingsMenu : Form
     {
-        public SettingsMenu()
+        DropDown dropDown;
+        Trie trie;
+        public SettingsMenu(DropDown dropDown, Trie trie)
         {
             InitializeComponent();
+            this.dropDown = dropDown;
+            this.trie = trie;
             //colorDialog1.ShowDialog();
         }
-        public event EventHandler AppliedSettings;
+        const int expSliderMax = 50000, expSliderMin = 1, baseNumber = 1000;
+        public int logSliderFrequncy // frequency slider is between 0 1nd 100
+        {
+            get
+            {
+                double scaleTransformed = (double)this.frequncySlider.Value / (double)this.frequncySlider.Maximum;
+                double expValue = Math.Pow(baseNumber, scaleTransformed);
 
+                // transforming to be in the bound of the slider
+                double untransformedExpMin = 1;// x^1 = x and x^0 = 1
+
+                return (int)TransformPointInRange(expValue, untransformedExpMin, baseNumber, expSliderMin, expSliderMax);
+            }
+            set
+            {
+                double expValue = TransformPointInRange(value,expSliderMin,expSliderMax,1, baseNumber);
+                double scaleTransformed = Math.Log(expValue, baseNumber);
+                frequncySlider.Value =(int)(scaleTransformed*frequncySlider.Maximum);
+            }
+        }
+        public double TransformPointInRange(double value, double originalMin,double originalMax, double newMin,double newMax)
+        {
+            double originalRange = originalMax - originalMin;
+            double newRange = newMax - newMin;
+            return ((value - originalMin) / originalRange * newRange) + newMin;
+        }
         private void ApplyButton_Click(object sender, EventArgs e)
         {
             SaveSettings();
-            AppliedSettings?.Invoke(this, EventArgs.Empty);
+            dropDown.LoadSettings();
 
 
         }
@@ -72,6 +102,11 @@ namespace Autocomplete
             // Update the text box color if the user clicks OK 
             if (colorDialog1.ShowDialog() == DialogResult.OK)
                 buttonHiglightBgColour.BackColor = colorDialog1.Color;
+        }
+
+        private void frequncySlider_Scroll(object sender, EventArgs e)
+        {
+            frequncyToolTip.SetToolTip(frequncySlider,logSliderFrequncy.ToString());
         }
 
         private void SettingsMenu_Load(object sender, EventArgs e)
