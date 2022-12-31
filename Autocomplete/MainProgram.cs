@@ -14,20 +14,8 @@ namespace Autocomplete
         private DropDown sugestionBox = null;
         private Trie trie;
         private System.Windows.Automation.Text.TextPatternRange textrange;
-        private SettingsMenu settingsMenu;
         public MainProgram()
         {
-            // start listening for typing in other apps.
-            appHandler = new AppReadWriter();
-            appHandler.OnTextChange += AppHandler_OnTextChange;
-            //listener = new LowLevelKeyBoardListener();
-            sugestionBox = new DropDown();
-            sugestionBox.Start();
-            sugestionBox.Stop();
-            trie = Trie.LoadFromFile();
-            sugestionBox.OnComplete += complete;
-            appHandler.OnAppChange += AppHandler_onAppChange;
-            settingsMenu= new SettingsMenu();
             // Initialize Tray Icon
             trayIcon = new NotifyIcon()
             {
@@ -39,6 +27,16 @@ namespace Autocomplete
                 Visible = true
             };
             trayIcon.Click += trayIcon_Click;
+            // start listening for typing in other apps.
+            appHandler = new AppReadWriter();
+            appHandler.OnTextChange += AppHandler_OnTextChange;
+            //listener = new LowLevelKeyBoardListener();
+            sugestionBox = new DropDown();
+            sugestionBox.Start();
+            sugestionBox.Stop();
+            trie = Trie.LoadFromFile();
+            sugestionBox.OnComplete += complete;
+            appHandler.OnAppChange += AppHandler_onAppChange;
         }
 
         private void AppHandler_onAppChange(object sender, EventArgs e)
@@ -105,6 +103,7 @@ namespace Autocomplete
             {
                 // Left click to reactivate
                 case MouseButtons.Left:
+                    var settingsMenu = new SettingsMenu(sugestionBox,trie);
                     settingsMenu.Show();
                     break;
             }
