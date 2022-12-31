@@ -107,6 +107,7 @@ namespace Autocomplete
                 wordsBox.SelectionLength = range;
                 wordsBox.SelectionColor = highlightColour;
                 wordsBox.SelectionBackColor = highlightBackgroundColour;
+                //wordsBox.DeselectAll();
                 oldSelection[0] = 0;
                 oldSelection[1] = 0;
             }
@@ -160,6 +161,15 @@ namespace Autocomplete
             SetStyle(ControlStyles.Selectable, false);
             //listener.OnKeyPressed += OnKeyPressed;
         }
+        protected override CreateParams CreateParams
+        {
+            get
+            {
+                CreateParams param = base.CreateParams;
+                param.ExStyle |= 0x08000000;// this might make the window unable to take focus
+                return param;
+            }
+        }
         private void loadunload()
         {
             ShowWindow(this.Handle, SW_SHOWNA);
@@ -201,6 +211,7 @@ namespace Autocomplete
                 wordsBox.SelectionLength = end - start;
                 wordsBox.SelectionColor = mouseHighlightColour;
                 wordsBox.SelectionBackColor = highlightBackgroundColour;
+                //wordsBox.DeselectAll();
                 oldSelection[0] = start;
                 oldSelection[1] = end - start;
             }
