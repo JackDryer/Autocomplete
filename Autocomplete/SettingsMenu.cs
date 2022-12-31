@@ -10,13 +10,15 @@ namespace Autocomplete
 {
     public partial class SettingsMenu : Form
     {
-        DropDown dropDown;
-        Trie trie;
+        DropDown mainDropDown;
+        Trie mainTrie;
+        DropDown exampleDropDown;
         public SettingsMenu(DropDown dropDown, Trie trie)
         {
             InitializeComponent();
-            this.dropDown = dropDown;
-            this.trie = trie;
+            this.mainDropDown = dropDown;
+            this.mainTrie = trie;
+
             //colorDialog1.ShowDialog();
         }
         const int expSliderMax = 50000, expSliderMin = 1, baseNumber = 1000;
@@ -34,12 +36,12 @@ namespace Autocomplete
             }
             set
             {
-                double expValue = TransformPointInRange(value,expSliderMin,expSliderMax,1, baseNumber);
+                double expValue = TransformPointInRange(value, expSliderMin, expSliderMax, 1, baseNumber);
                 double scaleTransformed = Math.Log(expValue, baseNumber);
-                frequncySlider.Value =(int)(scaleTransformed*frequncySlider.Maximum);
+                frequncySlider.Value = (int)(scaleTransformed * frequncySlider.Maximum);
             }
         }
-        public double TransformPointInRange(double value, double originalMin,double originalMax, double newMin,double newMax)
+        public double TransformPointInRange(double value, double originalMin, double originalMax, double newMin, double newMax)
         {
             double originalRange = originalMax - originalMin;
             double newRange = newMax - newMin;
@@ -48,7 +50,7 @@ namespace Autocomplete
         private void ApplyButton_Click(object sender, EventArgs e)
         {
             SaveSettings();
-            dropDown.LoadSettings();
+            mainDropDown.LoadSettings();
 
 
         }
@@ -106,7 +108,7 @@ namespace Autocomplete
 
         private void frequncySlider_Scroll(object sender, EventArgs e)
         {
-            frequncyToolTip.SetToolTip(frequncySlider,logSliderFrequncy.ToString());
+            frequncyToolTip.SetToolTip(frequncySlider, logSliderFrequncy.ToString());
         }
 
         private void SettingsMenu_Load(object sender, EventArgs e)
@@ -114,11 +116,16 @@ namespace Autocomplete
             string fileName = "settings.json";
             string jsonString = File.ReadAllText(fileName);
             Settings settings = JsonSerializer.Deserialize<Settings>(jsonString);
-            TextSizeupdown.Value =settings.textSize;
-            buttonTextColour.BackColor= Color.FromArgb(settings.textColour);
-            buttonBgColour.BackColor= Color.FromArgb(settings.backgroundColour);
-            buttonhighlightColour.BackColor= Color.FromArgb(settings.highlightColour);
-            buttonHiglightBgColour.BackColor= Color.FromArgb(settings.highlightBackgroundColour);
+            TextSizeupdown.Value = settings.textSize;
+            buttonTextColour.BackColor = Color.FromArgb(settings.textColour);
+            buttonBgColour.BackColor = Color.FromArgb(settings.backgroundColour);
+            buttonhighlightColour.BackColor = Color.FromArgb(settings.highlightColour);
+            buttonHiglightBgColour.BackColor = Color.FromArgb(settings.highlightBackgroundColour);
+        }
+        public int[] getHandlesToIgnore()
+        {
+            int[] handles = { (int)inputBox.Handle, (int)searchBox.Handle };
+            return handles;
         }
     }
 

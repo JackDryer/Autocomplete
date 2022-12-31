@@ -53,7 +53,6 @@
             this.lableRare = new System.Windows.Forms.Label();
             this.ApplyButton = new System.Windows.Forms.Button();
             this.colorDialog1 = new System.Windows.Forms.ColorDialog();
-            this.wordsBox = new System.Windows.Forms.RichTextBox();
             this.frequncyToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.labelFrequencyUnits = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.TextSizeupdown)).BeginInit();
@@ -271,17 +270,6 @@
             // 
             this.colorDialog1.AnyColor = true;
             // 
-            // wordsBox
-            // 
-            this.wordsBox.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.wordsBox.Location = new System.Drawing.Point(12, 40);
-            this.wordsBox.Name = "wordsBox";
-            this.wordsBox.ReadOnly = true;
-            this.wordsBox.ShortcutsEnabled = false;
-            this.wordsBox.Size = new System.Drawing.Size(275, 130);
-            this.wordsBox.TabIndex = 21;
-            this.wordsBox.Text = "";
-            // 
             // labelFrequencyUnits
             // 
             this.labelFrequencyUnits.AutoSize = true;
@@ -299,7 +287,6 @@
             this.ClientSize = new System.Drawing.Size(800, 450);
             this.Controls.Add(this.labelFrequencyUnits);
             this.Controls.Add(this.ApplyButton);
-            this.Controls.Add(this.wordsBox);
             this.Controls.Add(this.lableCommon);
             this.Controls.Add(this.lableRare);
             this.Controls.Add(this.buttonDelete);
@@ -324,7 +311,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "SettingsMenu";
             this.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.Text = "Settings";
+            this.Text = "git";
             this.Load += new System.EventHandler(this.SettingsMenu_Load);
             ((System.ComponentModel.ISupportInitialize)(this.TextSizeupdown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.frequncySlider)).EndInit();
@@ -357,7 +344,6 @@
         private System.Windows.Forms.Label lableRare;
         private System.Windows.Forms.Button ApplyButton;
         private System.Windows.Forms.ColorDialog colorDialog1;
-        private System.Windows.Forms.RichTextBox wordsBox;
         private System.Windows.Forms.ToolTip frequncyToolTip;
         private System.Windows.Forms.Label labelFrequencyUnits;
     }

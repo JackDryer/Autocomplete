@@ -105,6 +105,10 @@ namespace Autocomplete
                 case MouseButtons.Left:
                     var settingsMenu = new SettingsMenu(sugestionBox,trie);
                     settingsMenu.Show();
+                    foreach (int i in settingsMenu.getHandlesToIgnore())
+                    {
+                        appHandler.ignorehandles.Add(i);
+                    }
                     break;
             }
         }
