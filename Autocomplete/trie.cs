@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Autocomplete
 {
-    class Trie
+    public class Trie
     {
         static double MATCH = 0.999;
         static double NEAR = 0.4;
@@ -90,6 +90,20 @@ namespace Autocomplete
                 return children[word[0]].Contains(word.Substring(1));
             else
                 return false;
+        }
+        public int? getFrequncy(string word)
+        {
+            if (word.Length == 0)
+            {
+                if (frequencies.ContainsKey('$'))
+                    return frequencies['$'];
+                else return null;
+            }
+            else if (children.ContainsKey(word[0]))
+
+                return children[word[0]].getFrequncy(word.Substring(1));
+            else
+                return null;
         }
 
         public List<string> GetCompletions(string incomplete, int maxreturn = 100, double minimumprobability = 0)
