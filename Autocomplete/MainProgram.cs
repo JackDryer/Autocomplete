@@ -16,6 +16,13 @@ namespace Autocomplete
         private System.Windows.Automation.Text.TextPatternRange textrange;
         public MainProgram()
         {
+            // start listening for typing in other apps.
+            appHandler = new AppReadWriter();
+            appHandler.OnTextChange += AppHandler_OnTextChange;
+            //listener = new LowLevelKeyBoardListener();
+            sugestionBox = new DropDown();
+            sugestionBox.Start();
+            sugestionBox.Stop();
             // Initialize Tray Icon
             trayIcon = new NotifyIcon()
             {
@@ -27,16 +34,9 @@ namespace Autocomplete
                 Visible = true
             };
             trayIcon.Click += trayIcon_Click;
-            // start listening for typing in other apps.
-            appHandler = new AppReadWriter();
-            appHandler.OnTextChange += AppHandler_OnTextChange;
-            //listener = new LowLevelKeyBoardListener();
-            sugestionBox = new DropDown();
-            sugestionBox.Start();
-            sugestionBox.Stop();
-            trie = Trie.LoadFromFile();
             sugestionBox.OnComplete += complete;
             appHandler.OnAppChange += AppHandler_onAppChange;
+            trie = Trie.LoadFromFile();
         }
 
         private void AppHandler_onAppChange(object sender, EventArgs e)
@@ -81,7 +81,7 @@ namespace Autocomplete
                 if (word == null)
                     MessageBox.Show("word was null");
                 List<string> values = trie.GetCompletions(word, 10, 1E-307);// tested to 1E-324, minimum value of a float is ~ 2E-308
-                sugestionBox.suggestions = values;
+                sugestionBox.Suggestions = values;
                 //sugestionBox.UpdateContents();
                 sugestionBox.Start();
             }
