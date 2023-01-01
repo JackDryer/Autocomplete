@@ -55,6 +55,7 @@
             this.colorDialog1 = new System.Windows.Forms.ColorDialog();
             this.frequncyToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.labelFrequencyUnits = new System.Windows.Forms.Label();
+            this.exampleOutBox = new Autocomplete.HighlightedTextBox();
             ((System.ComponentModel.ISupportInitialize)(this.TextSizeupdown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.frequncySlider)).BeginInit();
             this.SuspendLayout();
@@ -164,6 +165,7 @@
             this.inputBox.Name = "inputBox";
             this.inputBox.Size = new System.Drawing.Size(228, 26);
             this.inputBox.TabIndex = 11;
+            this.inputBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.inputBox_KeyPress);
             // 
             // labelAddupdate
             // 
@@ -280,11 +282,20 @@
             this.labelFrequencyUnits.TabIndex = 23;
             this.labelFrequencyUnits.Text = "(Occurrences per million)";
             // 
+            // exampleOutBox
+            // 
+            this.exampleOutBox.Location = new System.Drawing.Point(12, 45);
+            this.exampleOutBox.Name = "exampleOutBox";
+            this.exampleOutBox.Size = new System.Drawing.Size(261, 131);
+            this.exampleOutBox.Suggestions = ((System.Collections.Generic.List<string>)(resources.GetObject("exampleOutBox.Suggestions")));
+            this.exampleOutBox.TabIndex = 24;
+            // 
             // SettingsMenu
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.exampleOutBox);
             this.Controls.Add(this.labelFrequencyUnits);
             this.Controls.Add(this.ApplyButton);
             this.Controls.Add(this.lableCommon);
@@ -311,7 +322,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "SettingsMenu";
             this.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.Text = "git";
+            this.Text = "Settings";
             this.Load += new System.EventHandler(this.SettingsMenu_Load);
             ((System.ComponentModel.ISupportInitialize)(this.TextSizeupdown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.frequncySlider)).EndInit();
@@ -346,6 +357,7 @@
         private System.Windows.Forms.ColorDialog colorDialog1;
         private System.Windows.Forms.ToolTip frequncyToolTip;
         private System.Windows.Forms.Label labelFrequencyUnits;
+        private HighlightedTextBox exampleOutBox;
     }
 }
 

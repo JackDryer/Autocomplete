@@ -5,6 +5,7 @@ using System.IO;
 using System.Drawing;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using System.CodeDom;
+using Microsoft.Office.Interop.Word;
 
 namespace Autocomplete
 {
@@ -12,12 +13,14 @@ namespace Autocomplete
     {
         DropDown mainDropDown;
         Trie mainTrie;
-        DropDown exampleDropDown;
+        Trie exampleTrie;
         public SettingsMenu(DropDown dropDown, Trie trie)
         {
             InitializeComponent();
             this.mainDropDown = dropDown;
             this.mainTrie = trie;
+            exampleOutBox.LoadSettings();
+            exampleTrie = Trie.LoadFromFile();
 
             //colorDialog1.ShowDialog();
         }
@@ -109,6 +112,12 @@ namespace Autocomplete
         private void frequncySlider_Scroll(object sender, EventArgs e)
         {
             frequncyToolTip.SetToolTip(frequncySlider, logSliderFrequncy.ToString());
+        }
+
+        private void inputBox_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            Console.WriteLine(inputBox.Text);
+            exampleOutBox.Suggestions=exampleTrie.GetCompletions(inputBox.Text, 10, 1E-307);
         }
 
         private void SettingsMenu_Load(object sender, EventArgs e)

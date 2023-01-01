@@ -102,6 +102,12 @@
     <Compile Include="DropDown.Designer.cs">
       <DependentUpon>DropDown.cs</DependentUpon>
     </Compile>
+    <Compile Include="HighlightedTextBox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="HighlightedTextBox.Designer.cs">
+      <DependentUpon>HighlightedTextBox.cs</DependentUpon>
+    </Compile>
     <Compile Include="Settings.cs" />
     <Compile Include="SettingsMenu.cs">
       <SubType>Form</SubType>
@@ -116,6 +122,9 @@
     <Compile Include="Trie.cs" />
     <EmbeddedResource Include="DropDown.resx">
       <DependentUpon>DropDown.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HighlightedTextBox.resx">
+      <DependentUpon>HighlightedTextBox.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SettingsMenu.resx">
       <DependentUpon>SettingsMenu.cs</DependentUpon>
