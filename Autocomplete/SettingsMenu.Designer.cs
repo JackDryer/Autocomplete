@@ -51,7 +51,6 @@
             this.buttonDelete = new System.Windows.Forms.Button();
             this.lableCommon = new System.Windows.Forms.Label();
             this.lableRare = new System.Windows.Forms.Label();
-            this.ApplyButton = new System.Windows.Forms.Button();
             this.colorDialog1 = new System.Windows.Forms.ColorDialog();
             this.frequncyToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.labelFrequencyUnits = new System.Windows.Forms.Label();
@@ -67,7 +66,7 @@
             this.TextSizeupdown.Location = new System.Drawing.Point(614, 28);
             this.TextSizeupdown.Name = "TextSizeupdown";
             this.TextSizeupdown.Size = new System.Drawing.Size(46, 26);
-            this.TextSizeupdown.TabIndex = 1;
+            this.TextSizeupdown.TabIndex = 6;
             this.TextSizeupdown.ValueChanged += new System.EventHandler(this.TextSizeupdown_ValueChanged);
             // 
             // labelTxtSize
@@ -143,7 +142,7 @@
             // buttonhighlightColour
             // 
             this.buttonhighlightColour.BackColor = System.Drawing.Color.Black;
-            this.buttonhighlightColour.Location = new System.Drawing.Point(685, 129);
+            this.buttonhighlightColour.Location = new System.Drawing.Point(695, 129);
             this.buttonhighlightColour.Name = "buttonhighlightColour";
             this.buttonhighlightColour.Size = new System.Drawing.Size(28, 28);
             this.buttonhighlightColour.TabIndex = 9;
@@ -166,9 +165,10 @@
             this.inputBox.Location = new System.Drawing.Point(12, 12);
             this.inputBox.Name = "inputBox";
             this.inputBox.Size = new System.Drawing.Size(228, 26);
-            this.inputBox.TabIndex = 11;
+            this.inputBox.TabIndex = 1;
             this.inputBox.TextChanged += new System.EventHandler(this.inputBox_TextChanged);
             this.inputBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.inputBox_KeyDown);
+            this.inputBox.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.inputBox_PreviewKeyDown);
             // 
             // labelAddupdate
             // 
@@ -186,7 +186,7 @@
             this.searchBox.Location = new System.Drawing.Point(176, 295);
             this.searchBox.Name = "searchBox";
             this.searchBox.Size = new System.Drawing.Size(177, 26);
-            this.searchBox.TabIndex = 13;
+            this.searchBox.TabIndex = 11;
             this.searchBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.searchBox_KeyDown);
             // 
             // labelFrequency
@@ -207,7 +207,7 @@
             this.frequncySlider.Maximum = 100;
             this.frequncySlider.Name = "frequncySlider";
             this.frequncySlider.Size = new System.Drawing.Size(177, 45);
-            this.frequncySlider.TabIndex = 15;
+            this.frequncySlider.TabIndex = 13;
             this.frequncySlider.TickFrequency = 0;
             this.frequncySlider.TickStyle = System.Windows.Forms.TickStyle.None;
             this.frequncySlider.Scroll += new System.EventHandler(this.frequncySlider_Scroll);
@@ -219,7 +219,7 @@
             this.buttonSearch.Location = new System.Drawing.Point(36, 377);
             this.buttonSearch.Name = "buttonSearch";
             this.buttonSearch.Size = new System.Drawing.Size(75, 28);
-            this.buttonSearch.TabIndex = 16;
+            this.buttonSearch.TabIndex = 12;
             this.buttonSearch.Text = "Search";
             this.buttonSearch.UseVisualStyleBackColor = true;
             this.buttonSearch.Click += new System.EventHandler(this.buttonSearch_Click);
@@ -231,7 +231,7 @@
             this.buttonUpadate.Location = new System.Drawing.Point(117, 377);
             this.buttonUpadate.Name = "buttonUpadate";
             this.buttonUpadate.Size = new System.Drawing.Size(75, 28);
-            this.buttonUpadate.TabIndex = 17;
+            this.buttonUpadate.TabIndex = 14;
             this.buttonUpadate.Text = "Update";
             this.buttonUpadate.UseVisualStyleBackColor = true;
             this.buttonUpadate.Click += new System.EventHandler(this.buttonUpadate_Click);
@@ -243,7 +243,7 @@
             this.buttonDelete.Location = new System.Drawing.Point(198, 377);
             this.buttonDelete.Name = "buttonDelete";
             this.buttonDelete.Size = new System.Drawing.Size(75, 28);
-            this.buttonDelete.TabIndex = 18;
+            this.buttonDelete.TabIndex = 15;
             this.buttonDelete.Text = "Delete";
             this.buttonDelete.UseVisualStyleBackColor = true;
             this.buttonDelete.Click += new System.EventHandler(this.buttonDelete_Click);
@@ -267,17 +267,6 @@
             this.lableRare.Size = new System.Drawing.Size(30, 13);
             this.lableRare.TabIndex = 20;
             this.lableRare.Text = "Rare";
-            // 
-            // ApplyButton
-            // 
-            this.ApplyButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ApplyButton.Location = new System.Drawing.Point(670, 410);
-            this.ApplyButton.Name = "ApplyButton";
-            this.ApplyButton.Size = new System.Drawing.Size(75, 28);
-            this.ApplyButton.TabIndex = 22;
-            this.ApplyButton.Text = "Apply";
-            this.ApplyButton.UseVisualStyleBackColor = true;
-            this.ApplyButton.Click += new System.EventHandler(this.ApplyButton_Click);
             // 
             // colorDialog1
             // 
@@ -309,6 +298,7 @@
             this.exampleOutBox.Size = new System.Drawing.Size(261, 131);
             this.exampleOutBox.Suggestions = ((System.Collections.Generic.List<string>)(resources.GetObject("exampleOutBox.Suggestions")));
             this.exampleOutBox.TabIndex = 24;
+            this.exampleOutBox.Enter += new System.EventHandler(this.exampleOutBox_Enter);
             // 
             // SettingsMenu
             // 
@@ -318,7 +308,6 @@
             this.Controls.Add(this.lblWordPressent);
             this.Controls.Add(this.exampleOutBox);
             this.Controls.Add(this.labelFrequencyUnits);
-            this.Controls.Add(this.ApplyButton);
             this.Controls.Add(this.lableCommon);
             this.Controls.Add(this.lableRare);
             this.Controls.Add(this.buttonDelete);
@@ -344,7 +333,6 @@
             this.Name = "SettingsMenu";
             this.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.Text = "Settings";
-            this.Load += new System.EventHandler(this.SettingsMenu_Load);
             ((System.ComponentModel.ISupportInitialize)(this.TextSizeupdown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.frequncySlider)).EndInit();
             this.ResumeLayout(false);
@@ -374,7 +362,6 @@
         private System.Windows.Forms.Button buttonDelete;
         private System.Windows.Forms.Label lableCommon;
         private System.Windows.Forms.Label lableRare;
-        private System.Windows.Forms.Button ApplyButton;
         private System.Windows.Forms.ColorDialog colorDialog1;
         private System.Windows.Forms.ToolTip frequncyToolTip;
         private System.Windows.Forms.Label labelFrequencyUnits;

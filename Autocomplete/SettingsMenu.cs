@@ -26,18 +26,22 @@ namespace Autocomplete
             this.mainTrie = trie;
             exampleTrie = Trie.LoadFromFile();
             exampleOutBox.Suggestions = exampleTrie.GetCompletions("", 10, 1E-307);
-
-            //colorDialog1.ShowDialog();
-        }
-        private void SettingsMenu_Load(object sender, EventArgs e)
-        {
             string fileName = "settings.json";
             string jsonString = File.ReadAllText(fileName);
             Settings settings = JsonSerializer.Deserialize<Settings>(jsonString);
             SettingsConfiguration = settings;
             exampleOutBox.ApplySettings(SettingsConfiguration);
+            exampleOutBox.WhenClicked += ExampleOutBox_WhenClick;
 
+            //colorDialog1.ShowDialog();
         }
+
+        private void ExampleOutBox_WhenClick(object sender, EventArgs e)
+        {
+            inputBox.Text = exampleOutBox.MouseSelection;
+            inputBox.SelectionStart = inputBox.Text.Length;
+        }
+
         const int expSliderMax = 60000, expSliderMin = 1, baseNumber = 1000;
         public int logSliderFrequncy // frequency slider is between 0 1nd 100
         {
@@ -64,12 +68,11 @@ namespace Autocomplete
             double newRange = newMax - newMin;
             return ((value - originalMin) / originalRange * newRange) + newMin;
         }
-        private void ApplyButton_Click(object sender, EventArgs e)
+        private void ApplySettings()
         {
+            exampleOutBox.ApplySettings(SettingsConfiguration);
             SaveSettings();
             mainDropDown.LoadSettings();
-
-
         }
         private Settings SettingsConfiguration
         {
@@ -86,7 +89,9 @@ namespace Autocomplete
             }
             set
             {
+                TextSizeupdown.ValueChanged -= TextSizeupdown_ValueChanged; // so that the settings not get set accidentally
                 TextSizeupdown.Value = value.textSize;
+                TextSizeupdown.ValueChanged += TextSizeupdown_ValueChanged;
                 buttonTextColour.BackColor = Color.FromArgb(value.textColour);
                 buttonBgColour.BackColor = Color.FromArgb(value.backgroundColour);
                 buttonhighlightColour.BackColor = Color.FromArgb(value.highlightColour);
@@ -98,12 +103,12 @@ namespace Autocomplete
             string fileName = "settings.json";
             string jsonString = JsonSerializer.Serialize(SettingsConfiguration);
 
-            File.WriteAllText(fileName, jsonString);
+            //File.WriteAllText(fileName, jsonString);
         }
 
         private void TextSizeupdown_ValueChanged(object sender, EventArgs e)
         {
-            exampleOutBox.ApplySettings(SettingsConfiguration);
+            ApplySettings();
         }
         //taken form https://learn.microsoft.com/en-us/dotnet/api/system.windows.forms.colordialog?view=windowsdesktop-7.0
         private void buttonTextColour_Click(object sender, EventArgs e)
@@ -113,7 +118,7 @@ namespace Autocomplete
             if (colorDialog1.ShowDialog() == DialogResult.OK)
             {
                 buttonTextColour.BackColor = colorDialog1.Color;
-                exampleOutBox.ApplySettings(SettingsConfiguration);
+                ApplySettings();
             }
         }
 
@@ -124,7 +129,7 @@ namespace Autocomplete
             if (colorDialog1.ShowDialog() == DialogResult.OK)
             {
                 buttonBgColour.BackColor = colorDialog1.Color;
-                exampleOutBox.ApplySettings(SettingsConfiguration);
+                ApplySettings();
             }
         }
 
@@ -135,7 +140,7 @@ namespace Autocomplete
             if (colorDialog1.ShowDialog() == DialogResult.OK)
             {
                 buttonhighlightColour.BackColor = colorDialog1.Color;
-                exampleOutBox.ApplySettings(SettingsConfiguration);
+                ApplySettings();
             }
     }
 
@@ -146,7 +151,7 @@ namespace Autocomplete
             if (colorDialog1.ShowDialog() == DialogResult.OK)
             {
                 buttonHiglightBgColour.BackColor = colorDialog1.Color;
-                exampleOutBox.ApplySettings(SettingsConfiguration);
+                ApplySettings();
             }
         }
         private void frequncySlider_MouseHover(object sender, EventArgs e)
@@ -158,7 +163,7 @@ namespace Autocomplete
             frequncySlider_MouseHover(sender, e);
             exampleTrie.UpdateFrequency(searchBox.Text, logSliderFrequncy);
             inputBox_TextChanged(sender, e);
-            Console.WriteLine(exampleTrie.GetFrequency(searchBox.Text));
+            //Console.WriteLine(exampleTrie.GetFrequency(searchBox.Text));
 
         }
 
@@ -177,8 +182,13 @@ namespace Autocomplete
                 case Keys.Down:
                     exampleOutBox.moveSelecionDown(sender, e);
                     break;
+                case Keys.Tab:
+                    inputBox.Text = exampleOutBox.Selection;
+                    inputBox.SelectionStart = inputBox.Text.Length;
+                    e.SuppressKeyPress = true;
+                    break;
             }
-        }
+        }                    
 
         private void buttonSearch_Click(object sender, EventArgs e)
         {
@@ -201,9 +211,12 @@ namespace Autocomplete
 
         private void searchBox_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode== Keys.Enter)
-                    buttonSearch_Click(sender, e);
-            else
+            if (e.KeyCode == Keys.Enter)
+            {
+                buttonSearch_Click(sender, e);
+                e.SuppressKeyPress = true;
+            }
+            else 
                 setWordOptionsDissabled();
         }
 
@@ -244,14 +257,18 @@ namespace Autocomplete
         private void buttonDelete_Click(object sender, EventArgs e)
         {
             mainTrie.Delete(searchBox.Text);
+            exampleTrie.UpdateFrequency(searchBox.Text,1);
+            logSliderFrequncy = 1;
+            inputBox_TextChanged(sender, e);//reload the suggestions
+
 
             // replace the text in the file
             string text = File.ReadAllText(MainProgram.pathToWordList);
 
-            var pattern = $"\\n?({searchBox.Text}:)(\\d+)";
-            Regex rgx = new Regex(pattern);
+            var pattern = $"^({searchBox.Text}:)(\\d+)\\n?";
+            Regex rgx = new Regex(pattern,RegexOptions.Multiline);
             var replacePattern = "";//$1 references the first group
-            text = rgx.Replace(text, replacePattern, 1).Trim( '\r', '\n' );;
+            text = rgx.Replace(text, replacePattern).Trim( '\r', '\n' );;
 
             File.WriteAllText(MainProgram.pathToWordList, text);
             lblWordPressent.Text = "Word Deleted";
@@ -265,6 +282,19 @@ namespace Autocomplete
             buttonUpadate.Text = "Update";
             buttonDelete.Enabled= false;
             lblWordPressent.Text= "";
+        }
+
+        private void exampleOutBox_Enter(object sender, EventArgs e)
+        {
+            inputBox.Focus();
+        }
+
+        private void inputBox_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+        {
+            if (e.KeyCode == Keys.Tab)
+            {
+                e.IsInputKey = true;// so it doesn't switch focus for this particular key
+            }
         }
 
         private void setWordOptionsUpdate()
