@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,10 +13,11 @@ namespace Autocomplete
         static double NEAR = 0.4;
         static double WRONG = 0.01;
         static bool DEBUG = false;
+        const char WORDEND = '$';
         public static Trie LoadFromFile()
         {
             Trie outtrie = new Trie();
-            using (var sr = new System.IO.StreamReader("processed.txt"))
+            using (var sr = new System.IO.StreamReader(MainProgram.pathToWordList))
             {
                 string all = sr.ReadToEnd();
                 string[] allList = all.Split('\n');
@@ -46,10 +48,10 @@ namespace Autocomplete
             }
             else
             {
-                if (frequencies.ContainsKey('$'))
-                    frequencies['$'] += frequency;
+                if (frequencies.ContainsKey(WORDEND))
+                    frequencies[WORDEND] += frequency;
                 else
-                    frequencies['$'] = frequency;
+                    frequencies[WORDEND] = frequency;
             }
             totalcount += frequency;
         }
@@ -72,7 +74,7 @@ namespace Autocomplete
             }
             else
             {
-                frequencies['$'] = frequency;
+                frequencies[WORDEND] = frequency;
             }
 
 
@@ -83,7 +85,7 @@ namespace Autocomplete
         {
             if (word.Length == 0)
             {
-                return frequencies.ContainsKey('$');
+                return frequencies.ContainsKey(WORDEND);
             }
             else if (children.ContainsKey(word[0]))
 
@@ -91,19 +93,46 @@ namespace Autocomplete
             else
                 return false;
         }
-        public int? getFrequncy(string word)
+        public int GetFrequency(string word)
         {
             if (word.Length == 0)
             {
-                if (frequencies.ContainsKey('$'))
-                    return frequencies['$'];
-                else return null;
+                if (frequencies.ContainsKey(WORDEND))
+                    return frequencies[WORDEND];
+                else throw new ArgumentOutOfRangeException();
             }
             else if (children.ContainsKey(word[0]))
 
-                return children[word[0]].getFrequncy(word.Substring(1));
+                return children[word[0]].GetFrequency(word.Substring(1));
             else
-                return null;
+                throw new ArgumentOutOfRangeException();
+        }
+        public void UpdateFrequency(string word, int frequency)
+        {
+            int oldfrequency = this.GetFrequency(word);
+            int diff =frequency - oldfrequency;
+            this.Add(word, diff);
+        }
+        public void Delete(string word)
+        {
+            var frequency = this.GetFrequency(word);
+            if (word.Length == 0)
+            {
+                this.frequencies.Remove(WORDEND);
+            }
+            else
+            {
+                this.frequencies[word[0]] -= frequency;
+                if (this.frequencies[word[0]] == 0)
+                {
+                    this.frequencies.Remove(word[0]);
+                    this.children.Remove(word[0]);
+                }
+                else
+                {
+                    this.children[word[0]].Delete(word.Substring(1));
+                }
+            }
         }
 
         public List<string> GetCompletions(string incomplete, int maxreturn = 100, double minimumprobability = 0)
@@ -146,7 +175,7 @@ namespace Autocomplete
                     foreach (KeyValuePair<char, double> i in mostProbable.getKeyProbabilities(incomplete.ElementAtOrDefault(index), surround))
                     {
                         wordProbability = i.Value * probability;
-                        if (i.Key == '$')
+                        if (i.Key == WORDEND)
                         {
                             var lengthdiff = incomplete.Length - pastWord.Length;// only is an issue when the word is too short, this is an autocomplete after all
                             if (lengthdiff > 1)
