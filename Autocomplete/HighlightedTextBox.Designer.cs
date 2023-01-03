@@ -33,9 +33,11 @@
             // 
             // richTextBox
             // 
+            this.richTextBox.DetectUrls = false;
             this.richTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.richTextBox.Location = new System.Drawing.Point(0, 0);
             this.richTextBox.Name = "richTextBox";
+            this.richTextBox.ReadOnly = true;
             this.richTextBox.Size = new System.Drawing.Size(306, 151);
             this.richTextBox.TabIndex = 0;
             this.richTextBox.Text = "";

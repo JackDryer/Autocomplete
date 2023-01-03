@@ -151,6 +151,7 @@ namespace Autocomplete
             this.mouseHighlightColour = this.highlightColour;
             this.richTextBox.Font = new Font("Microsoft Sans Serif", (float)this.textSize);
 
+            UpdateContents();
         }
         public int GetHandle()// for ignoring clicks to itself
         {
