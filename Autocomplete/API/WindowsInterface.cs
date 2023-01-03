@@ -119,6 +119,8 @@ namespace Autocomplete
             {
                 return null;
             }
+            catch (ElementNotAvailableException)
+            { return null; }
         }
         private void handleTextChange(object src, AutomationEventArgs e)
         {
