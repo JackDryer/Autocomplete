@@ -6,6 +6,11 @@ using System.Drawing;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using System.CodeDom;
 using Microsoft.Office.Interop.Word;
+using System.Security.Cryptography;
+using System.Text.RegularExpressions;
+using System.Windows.Automation;
+using Autocomplete.Properties;
+using System.Runtime;
 
 namespace Autocomplete
 {
@@ -19,12 +24,21 @@ namespace Autocomplete
             InitializeComponent();
             this.mainDropDown = dropDown;
             this.mainTrie = trie;
-            exampleOutBox.LoadSettings();
             exampleTrie = Trie.LoadFromFile();
+            exampleOutBox.Suggestions = exampleTrie.GetCompletions("", 10, 1E-307);
 
             //colorDialog1.ShowDialog();
         }
-        const int expSliderMax = 50000, expSliderMin = 1, baseNumber = 1000;
+        private void SettingsMenu_Load(object sender, EventArgs e)
+        {
+            string fileName = "settings.json";
+            string jsonString = File.ReadAllText(fileName);
+            Settings settings = JsonSerializer.Deserialize<Settings>(jsonString);
+            SettingsConfiguration = settings;
+            exampleOutBox.ApplySettings(SettingsConfiguration);
+
+        }
+        const int expSliderMax = 60000, expSliderMin = 1, baseNumber = 1000;
         public int logSliderFrequncy // frequency slider is between 0 1nd 100
         {
             get
@@ -57,84 +71,215 @@ namespace Autocomplete
 
 
         }
+        private Settings SettingsConfiguration
+        {
+            get
+            {
+                return new Settings
+                {
+                    textSize = TextSizeupdown.Value,
+                    textColour = buttonTextColour.BackColor.ToArgb(),
+                    backgroundColour = buttonBgColour.BackColor.ToArgb(),
+                    highlightColour = buttonhighlightColour.BackColor.ToArgb(),
+                    highlightBackgroundColour = buttonHiglightBgColour.BackColor.ToArgb()
+                };
+            }
+            set
+            {
+                TextSizeupdown.Value = value.textSize;
+                buttonTextColour.BackColor = Color.FromArgb(value.textColour);
+                buttonBgColour.BackColor = Color.FromArgb(value.backgroundColour);
+                buttonhighlightColour.BackColor = Color.FromArgb(value.highlightColour);
+                buttonHiglightBgColour.BackColor = Color.FromArgb(value.highlightBackgroundColour);
+            }
+        }
         private void SaveSettings()
         {
-            var settings = new Settings
-            {
-                textSize = TextSizeupdown.Value,
-                textColour = buttonTextColour.BackColor.ToArgb(),
-                backgroundColour = buttonBgColour.BackColor.ToArgb(),
-                highlightColour = buttonhighlightColour.BackColor.ToArgb(),
-                highlightBackgroundColour = buttonHiglightBgColour.BackColor.ToArgb()
-            };
             string fileName = "settings.json";
-            string jsonString = JsonSerializer.Serialize(settings);
+            string jsonString = JsonSerializer.Serialize(SettingsConfiguration);
 
             File.WriteAllText(fileName, jsonString);
+        }
+
+        private void TextSizeupdown_ValueChanged(object sender, EventArgs e)
+        {
+            exampleOutBox.ApplySettings(SettingsConfiguration);
         }
         //taken form https://learn.microsoft.com/en-us/dotnet/api/system.windows.forms.colordialog?view=windowsdesktop-7.0
         private void buttonTextColour_Click(object sender, EventArgs e)
         {
             colorDialog1.Color = buttonTextColour.BackColor;
-
-            // Update the text box color if the user clicks OK 
+            // Update the text box color and the exampleBox if the user clicks OK 
             if (colorDialog1.ShowDialog() == DialogResult.OK)
+            {
                 buttonTextColour.BackColor = colorDialog1.Color;
+                exampleOutBox.ApplySettings(SettingsConfiguration);
+            }
         }
 
         private void buttonBgColour_Click(object sender, EventArgs e)
         {
             colorDialog1.Color = buttonBgColour.BackColor;
 
-            // Update the text box color if the user clicks OK 
             if (colorDialog1.ShowDialog() == DialogResult.OK)
+            {
                 buttonBgColour.BackColor = colorDialog1.Color;
+                exampleOutBox.ApplySettings(SettingsConfiguration);
+            }
         }
 
         private void buttonhighlightColour_Click(object sender, EventArgs e)
         {
             colorDialog1.Color = buttonhighlightColour.BackColor;
 
-            // Update the text box color if the user clicks OK 
             if (colorDialog1.ShowDialog() == DialogResult.OK)
+            {
                 buttonhighlightColour.BackColor = colorDialog1.Color;
-        }
+                exampleOutBox.ApplySettings(SettingsConfiguration);
+            }
+    }
 
         private void buttonHiglightBgColour_Click(object sender, EventArgs e)
         {
             colorDialog1.Color = buttonHiglightBgColour.BackColor;
 
-            // Update the text box color if the user clicks OK 
             if (colorDialog1.ShowDialog() == DialogResult.OK)
+            {
                 buttonHiglightBgColour.BackColor = colorDialog1.Color;
+                exampleOutBox.ApplySettings(SettingsConfiguration);
+            }
         }
-
-        private void frequncySlider_Scroll(object sender, EventArgs e)
+        private void frequncySlider_MouseHover(object sender, EventArgs e)
         {
             frequncyToolTip.SetToolTip(frequncySlider, logSliderFrequncy.ToString());
         }
-
-        private void inputBox_KeyPress(object sender, KeyPressEventArgs e)
+        private void frequncySlider_Scroll(object sender, EventArgs e)
         {
-            Console.WriteLine(inputBox.Text);
-            exampleOutBox.Suggestions=exampleTrie.GetCompletions(inputBox.Text, 10, 1E-307);
+            frequncySlider_MouseHover(sender, e);
+            exampleTrie.UpdateFrequency(searchBox.Text, logSliderFrequncy);
+            inputBox_TextChanged(sender, e);
+            Console.WriteLine(exampleTrie.GetFrequency(searchBox.Text));
+
         }
 
-        private void SettingsMenu_Load(object sender, EventArgs e)
+        private void inputBox_TextChanged(object sender, EventArgs e)
         {
-            string fileName = "settings.json";
-            string jsonString = File.ReadAllText(fileName);
-            Settings settings = JsonSerializer.Deserialize<Settings>(jsonString);
-            TextSizeupdown.Value = settings.textSize;
-            buttonTextColour.BackColor = Color.FromArgb(settings.textColour);
-            buttonBgColour.BackColor = Color.FromArgb(settings.backgroundColour);
-            buttonhighlightColour.BackColor = Color.FromArgb(settings.highlightColour);
-            buttonHiglightBgColour.BackColor = Color.FromArgb(settings.highlightBackgroundColour);
+            exampleOutBox.Suggestions = exampleTrie.GetCompletions(inputBox.Text, 10, 1E-307);
+        }
+
+        private void inputBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            switch (e.KeyCode)
+            {
+                case Keys.Up:
+                    exampleOutBox.moveSelecionUp(sender, e);
+                    break;
+                case Keys.Down:
+                    exampleOutBox.moveSelecionDown(sender, e);
+                    break;
+            }
+        }
+
+        private void buttonSearch_Click(object sender, EventArgs e)
+        {
+            if (mainTrie.Contains(searchBox.Text))
+            {
+                logSliderFrequncy = (int)mainTrie.GetFrequency(searchBox.Text);
+                setWordOptionsUpdate();
+                lblWordPressent.Text = "Word is present in wordlist";
+                exampleTrie.UpdateFrequency(searchBox.Text, logSliderFrequncy);
+            }
+            else
+            {
+                logSliderFrequncy = 1;
+                setWordOptionsAdd();
+                lblWordPressent.Text = "Word was not found in wordlist";
+                exampleTrie.Add(searchBox.Text, logSliderFrequncy);
+            }
+            inputBox_TextChanged(sender, e);
+        }
+
+        private void searchBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode== Keys.Enter)
+                    buttonSearch_Click(sender, e);
+            else
+                setWordOptionsDissabled();
+        }
+
+        private void buttonUpadate_Click(object sender, EventArgs e)
+        {
+            if (mainTrie.Contains(searchBox.Text))
+            {
+                mainTrie.UpdateFrequency(searchBox.Text, logSliderFrequncy);
+
+                // replace the text in the file
+                string text = File.ReadAllText(MainProgram.pathToWordList);
+
+                var pattern = $"(^{searchBox.Text}:)(\\d+)";
+                Regex rgx = new Regex(pattern, RegexOptions.Multiline);
+                var replacePattern = $"{searchBox.Text}:{logSliderFrequncy}";//$1 references the first group
+                text = rgx.Replace(text, replacePattern,1);
+
+                File.WriteAllText(MainProgram.pathToWordList, text);
+                lblWordPressent.Text = "Word Updated";
+            }
+            else
+            {
+
+                mainTrie.Add(searchBox.Text, logSliderFrequncy);
+                // replace the text in the file
+                File.AppendAllText(MainProgram.pathToWordList, $"\n{searchBox.Text}:{logSliderFrequncy}");
+                lblWordPressent.Text = "Word Added";
+                setWordOptionsUpdate();
+            }
+
         }
         public int[] getHandlesToIgnore()
         {
-            int[] handles = { (int)inputBox.Handle, (int)searchBox.Handle };
+            int[] handles = { (int)inputBox.Handle, (int)searchBox.Handle, exampleOutBox.GetHandle() };
             return handles;
+        }
+
+        private void buttonDelete_Click(object sender, EventArgs e)
+        {
+            mainTrie.Delete(searchBox.Text);
+
+            // replace the text in the file
+            string text = File.ReadAllText(MainProgram.pathToWordList);
+
+            var pattern = $"\\n?({searchBox.Text}:)(\\d+)";
+            Regex rgx = new Regex(pattern);
+            var replacePattern = "";//$1 references the first group
+            text = rgx.Replace(text, replacePattern, 1).Trim( '\r', '\n' );;
+
+            File.WriteAllText(MainProgram.pathToWordList, text);
+            lblWordPressent.Text = "Word Deleted";
+            setWordOptionsAdd();
+        }
+
+        private void setWordOptionsDissabled()
+        {
+            frequncySlider.Enabled= false;
+            buttonUpadate.Enabled= false;
+            buttonUpadate.Text = "Update";
+            buttonDelete.Enabled= false;
+            lblWordPressent.Text= "";
+        }
+
+        private void setWordOptionsUpdate()
+        {
+            frequncySlider.Enabled = true;
+            buttonUpadate.Enabled = true;
+            buttonUpadate.Text = "Update";
+            buttonDelete.Enabled = true;
+        }
+        private void setWordOptionsAdd()
+        {
+            frequncySlider.Enabled = true;
+            buttonUpadate.Enabled = true;
+            buttonUpadate.Text = "Add";
+            buttonDelete.Enabled = false;
         }
     }
 

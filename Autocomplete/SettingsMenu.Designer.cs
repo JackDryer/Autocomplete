@@ -55,6 +55,7 @@
             this.colorDialog1 = new System.Windows.Forms.ColorDialog();
             this.frequncyToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.labelFrequencyUnits = new System.Windows.Forms.Label();
+            this.lblWordPressent = new System.Windows.Forms.Label();
             this.exampleOutBox = new Autocomplete.HighlightedTextBox();
             ((System.ComponentModel.ISupportInitialize)(this.TextSizeupdown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.frequncySlider)).BeginInit();
@@ -67,6 +68,7 @@
             this.TextSizeupdown.Name = "TextSizeupdown";
             this.TextSizeupdown.Size = new System.Drawing.Size(46, 26);
             this.TextSizeupdown.TabIndex = 1;
+            this.TextSizeupdown.ValueChanged += new System.EventHandler(this.TextSizeupdown_ValueChanged);
             // 
             // labelTxtSize
             // 
@@ -104,9 +106,9 @@
             this.labelHighlightColour.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.labelHighlightColour.Location = new System.Drawing.Point(530, 132);
             this.labelHighlightColour.Name = "labelHighlightColour";
-            this.labelHighlightColour.Size = new System.Drawing.Size(125, 20);
+            this.labelHighlightColour.Size = new System.Drawing.Size(159, 20);
             this.labelHighlightColour.TabIndex = 5;
-            this.labelHighlightColour.Text = "Highlight Colour:";
+            this.labelHighlightColour.Text = "Highlight Text Colour:";
             // 
             // labelHighlightBgColour
             // 
@@ -141,7 +143,7 @@
             // buttonhighlightColour
             // 
             this.buttonhighlightColour.BackColor = System.Drawing.Color.Black;
-            this.buttonhighlightColour.Location = new System.Drawing.Point(661, 129);
+            this.buttonhighlightColour.Location = new System.Drawing.Point(685, 129);
             this.buttonhighlightColour.Name = "buttonhighlightColour";
             this.buttonhighlightColour.Size = new System.Drawing.Size(28, 28);
             this.buttonhighlightColour.TabIndex = 9;
@@ -165,7 +167,8 @@
             this.inputBox.Name = "inputBox";
             this.inputBox.Size = new System.Drawing.Size(228, 26);
             this.inputBox.TabIndex = 11;
-            this.inputBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.inputBox_KeyPress);
+            this.inputBox.TextChanged += new System.EventHandler(this.inputBox_TextChanged);
+            this.inputBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.inputBox_KeyDown);
             // 
             // labelAddupdate
             // 
@@ -184,6 +187,7 @@
             this.searchBox.Name = "searchBox";
             this.searchBox.Size = new System.Drawing.Size(177, 26);
             this.searchBox.TabIndex = 13;
+            this.searchBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.searchBox_KeyDown);
             // 
             // labelFrequency
             // 
@@ -197,6 +201,7 @@
             // 
             // frequncySlider
             // 
+            this.frequncySlider.Enabled = false;
             this.frequncySlider.LargeChange = 10;
             this.frequncySlider.Location = new System.Drawing.Point(176, 335);
             this.frequncySlider.Maximum = 100;
@@ -206,6 +211,7 @@
             this.frequncySlider.TickFrequency = 0;
             this.frequncySlider.TickStyle = System.Windows.Forms.TickStyle.None;
             this.frequncySlider.Scroll += new System.EventHandler(this.frequncySlider_Scroll);
+            this.frequncySlider.MouseHover += new System.EventHandler(this.frequncySlider_MouseHover);
             // 
             // buttonSearch
             // 
@@ -216,9 +222,11 @@
             this.buttonSearch.TabIndex = 16;
             this.buttonSearch.Text = "Search";
             this.buttonSearch.UseVisualStyleBackColor = true;
+            this.buttonSearch.Click += new System.EventHandler(this.buttonSearch_Click);
             // 
             // buttonUpadate
             // 
+            this.buttonUpadate.Enabled = false;
             this.buttonUpadate.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.buttonUpadate.Location = new System.Drawing.Point(117, 377);
             this.buttonUpadate.Name = "buttonUpadate";
@@ -226,9 +234,11 @@
             this.buttonUpadate.TabIndex = 17;
             this.buttonUpadate.Text = "Update";
             this.buttonUpadate.UseVisualStyleBackColor = true;
+            this.buttonUpadate.Click += new System.EventHandler(this.buttonUpadate_Click);
             // 
             // buttonDelete
             // 
+            this.buttonDelete.Enabled = false;
             this.buttonDelete.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.buttonDelete.Location = new System.Drawing.Point(198, 377);
             this.buttonDelete.Name = "buttonDelete";
@@ -236,6 +246,7 @@
             this.buttonDelete.TabIndex = 18;
             this.buttonDelete.Text = "Delete";
             this.buttonDelete.UseVisualStyleBackColor = true;
+            this.buttonDelete.Click += new System.EventHandler(this.buttonDelete_Click);
             // 
             // lableCommon
             // 
@@ -282,6 +293,15 @@
             this.labelFrequencyUnits.TabIndex = 23;
             this.labelFrequencyUnits.Text = "(Occurrences per million)";
             // 
+            // lblWordPressent
+            // 
+            this.lblWordPressent.AutoSize = true;
+            this.lblWordPressent.Location = new System.Drawing.Point(280, 387);
+            this.lblWordPressent.Name = "lblWordPressent";
+            this.lblWordPressent.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.lblWordPressent.Size = new System.Drawing.Size(0, 13);
+            this.lblWordPressent.TabIndex = 25;
+            // 
             // exampleOutBox
             // 
             this.exampleOutBox.Location = new System.Drawing.Point(12, 45);
@@ -295,6 +315,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.lblWordPressent);
             this.Controls.Add(this.exampleOutBox);
             this.Controls.Add(this.labelFrequencyUnits);
             this.Controls.Add(this.ApplyButton);
@@ -358,6 +379,7 @@
         private System.Windows.Forms.ToolTip frequncyToolTip;
         private System.Windows.Forms.Label labelFrequencyUnits;
         private HighlightedTextBox exampleOutBox;
+        private System.Windows.Forms.Label lblWordPressent;
     }
 }
 
