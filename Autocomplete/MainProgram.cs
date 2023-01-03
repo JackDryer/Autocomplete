@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -8,6 +9,7 @@ namespace Autocomplete
 {
     public class MainProgram : ApplicationContext
     {
+        public const string pathToWordList = "processed.txt";
         private NotifyIcon trayIcon;
         private AppReadWriter appHandler;
         //private LowLevelKeyBoardListener listener;
