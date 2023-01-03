@@ -86,11 +86,16 @@ namespace Autocomplete
                     outtext += Suggestions[i];
                     outtext += "\n";
                 }
+                outtext = outtext.TrimEnd('\n');
                 SetText(outtext);
                 richTextBox.SelectionStart = start;
                 richTextBox.SelectionLength = range;
                 richTextBox.SelectionColor = highlightColour;
                 richTextBox.SelectionBackColor = highlightBackgroundColour;
+                if (!richTextBox.ClientRectangle.Contains(richTextBox.GetPositionFromCharIndex(richTextBox.SelectionStart)))
+                    {
+                    richTextBox.ScrollToCaret();
+                    }
                 //richTextBox.DeselectAll();
                 lastRecoredMouseSelection[0] = 0;//how does this help?
                 lastRecoredMouseSelection[1] = 0;
