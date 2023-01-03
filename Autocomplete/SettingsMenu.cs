@@ -201,10 +201,15 @@ namespace Autocomplete
             }
             else
             {
-                logSliderFrequncy = 1;
-                setWordOptionsAdd();
+                if (!exampleTrie.Contains(searchBox.Text))
+                {
+                    logSliderFrequncy = 1;
+                    exampleTrie.Add(searchBox.Text, logSliderFrequncy);
+                    
+                }
                 lblWordPressent.Text = "Word was not found in wordlist";
-                exampleTrie.Add(searchBox.Text, logSliderFrequncy);
+                setWordOptionsAdd();
+
             }
             inputBox_TextChanged(sender, e);
         }
@@ -216,8 +221,11 @@ namespace Autocomplete
                 buttonSearch_Click(sender, e);
                 e.SuppressKeyPress = true;
             }
-            else 
+            else
+            {
+                lblWordPressent.Text = "";
                 setWordOptionsDissabled();
+            }
         }
 
         private void buttonUpadate_Click(object sender, EventArgs e)
@@ -239,7 +247,6 @@ namespace Autocomplete
             }
             else
             {
-
                 mainTrie.Add(searchBox.Text, logSliderFrequncy);
                 // replace the text in the file
                 File.AppendAllText(MainProgram.pathToWordList, $"\n{searchBox.Text}:{logSliderFrequncy}");
@@ -257,8 +264,7 @@ namespace Autocomplete
         private void buttonDelete_Click(object sender, EventArgs e)
         {
             mainTrie.Delete(searchBox.Text);
-            exampleTrie.UpdateFrequency(searchBox.Text,1);
-            logSliderFrequncy = 1;
+            exampleTrie.Delete(searchBox.Text);
             inputBox_TextChanged(sender, e);//reload the suggestions
 
 
@@ -272,7 +278,7 @@ namespace Autocomplete
 
             File.WriteAllText(MainProgram.pathToWordList, text);
             lblWordPressent.Text = "Word Deleted";
-            setWordOptionsAdd();
+            setWordOptionsDissabled();
         }
 
         private void setWordOptionsDissabled()
@@ -281,7 +287,6 @@ namespace Autocomplete
             buttonUpadate.Enabled= false;
             buttonUpadate.Text = "Update";
             buttonDelete.Enabled= false;
-            lblWordPressent.Text= "";
         }
 
         private void exampleOutBox_Enter(object sender, EventArgs e)

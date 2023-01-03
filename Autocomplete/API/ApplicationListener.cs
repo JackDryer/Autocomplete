@@ -26,10 +26,14 @@ namespace Autocomplete
             //Console.WriteLine(AutomationElement.FocusedElement.Current.NativeWindowHandle);
             //Console.WriteLine(String.Join(",", ignorehandles));
             //Console.WriteLine(Process.GetProcessById(AutomationElement.FocusedElement.Current.ProcessId).ProcessName);
-            if (ignorehandles.Contains(AutomationElement.FocusedElement.Current.NativeWindowHandle) || AutomationElement.FocusedElement == activeWindow)
+            try
             {
-                return;
+                if (ignorehandles.Contains(AutomationElement.FocusedElement.Current.NativeWindowHandle) || AutomationElement.FocusedElement == activeWindow)
+                {
+                    return;
+                }
             }
+            catch (ElementNotAvailableException){ return; } //if i cant find the element, its not important
             activeWindow = AutomationElement.FocusedElement;
             if (!activeWindow.TryGetCurrentPattern(TextPattern.Pattern, out object textob))//Editables.Contains(className)
             {
