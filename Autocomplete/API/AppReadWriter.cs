@@ -42,16 +42,20 @@ namespace Autocomplete
             Listener = new ApplicationListener();
             Listener.OnAppChange += Listener_OnAppChange;
         }
+
         private void InsertWindows(string word, TextPatternRange range)
         {
             Thread thread = new Thread(() => {
                 objWord.ScreenUpdating = false; // more astheticaly pleasing
+                //if (objWord.Selection.Start== objWord.Selection.End)
                 var rangetoreplace = objWord.Selection.Previous();
                 rangetoreplace.Expand(WdUnits.wdWord);
-                rangetoreplace.Delete();
-                objWord.Selection.InsertAfter(word);
-                objWord.Selection.Collapse(WdCollapseDirection.wdCollapseEnd);
+                if (rangetoreplace.Text.EndsWith(" "))
+                    rangetoreplace.MoveEnd(WdUnits.wdCharacter,-1);
+                rangetoreplace.Text = word;
+                objWord.Selection.Move(WdUnits.wdWord, 1);
                 objWord.ScreenUpdating = true;
+
             });
             thread.SetApartmentState(ApartmentState.STA);
             thread.Start();
