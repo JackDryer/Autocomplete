@@ -103,7 +103,7 @@ namespace Autocomplete
             string fileName = "settings.json";
             string jsonString = JsonSerializer.Serialize(SettingsConfiguration);
 
-            //File.WriteAllText(fileName, jsonString);
+            File.WriteAllText(fileName, jsonString);
         }
 
         private void TextSizeupdown_ValueChanged(object sender, EventArgs e)
