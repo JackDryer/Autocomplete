@@ -204,7 +204,7 @@
             this.frequncySlider.Enabled = false;
             this.frequncySlider.LargeChange = 10;
             this.frequncySlider.Location = new System.Drawing.Point(176, 335);
-            this.frequncySlider.Maximum = 100;
+            this.frequncySlider.Maximum = 500;
             this.frequncySlider.Name = "frequncySlider";
             this.frequncySlider.Size = new System.Drawing.Size(177, 45);
             this.frequncySlider.TabIndex = 13;
