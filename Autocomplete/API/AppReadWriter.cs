@@ -1,4 +1,5 @@
-﻿using Microsoft.Office.Interop.Word;
+﻿using Autocomplete.API;
+using Microsoft.Office.Interop.Word;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -8,7 +9,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Automation.Text;
-using Word = Microsoft.Office.Interop.Word;
+
 
 namespace Autocomplete
 {
@@ -20,7 +21,7 @@ namespace Autocomplete
     internal class AppReadWriter
     {
         private ApplicationListener Listener;
-        private Word.Application objWord;
+        private WordInterface wordInterface;
 
         private TypingListener typingListener;
         private WindowsInterface windowsInterface;
@@ -40,25 +41,8 @@ namespace Autocomplete
             windowsInterface = new WindowsInterface();
             typingListener = new TypingListener();
             Listener = new ApplicationListener();
+            wordInterface= new WordInterface();
             Listener.OnAppChange += Listener_OnAppChange;
-        }
-
-        private void InsertWindows(string word, TextPatternRange range)
-        {
-            Thread thread = new Thread(() => {
-                objWord.ScreenUpdating = false; // more astheticaly pleasing
-                //if (objWord.Selection.Start== objWord.Selection.End)
-                var rangetoreplace = objWord.Selection.Previous();
-                rangetoreplace.Expand(WdUnits.wdWord);
-                if (rangetoreplace.Text.EndsWith(" "))
-                    rangetoreplace.MoveEnd(WdUnits.wdCharacter,-1);
-                rangetoreplace.Text = word;
-                objWord.Selection.Move(WdUnits.wdWord, 1);
-                objWord.ScreenUpdating = true;
-
-            });
-            thread.SetApartmentState(ApartmentState.STA);
-            thread.Start();
         }
         private void Listener_OnAppChange(object sender, EventArgs e)
         {
@@ -67,11 +51,10 @@ namespace Autocomplete
             if (Process.GetProcessById(Listener.GetProcessId()).ProcessName == "WINWORD")
             {
                 // app is like word
-                windowsInterface.Latch();
-                objWord = Marshal.GetActiveObject("Word.Application") as Word.Application; //equivilent to latch
-                this.GetActiveWord = windowsInterface.GetActiveWord;
-                this.ReplaceWord = InsertWindows;
-                typingListener.OnTextChange += OnTextChange;
+                wordInterface.Latch();
+                this.GetActiveWord = wordInterface.GetActiveWord;
+                this.ReplaceWord = wordInterface.Insert;
+                typingListener.OnTextChange += OnTextChange;// no need to latch as unlatch just removes all events
                 
             }
             else
