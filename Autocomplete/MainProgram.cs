@@ -9,7 +9,7 @@ namespace Autocomplete
 {
     public class MainProgram : ApplicationContext
     {
-        public const string pathToWordList = "processed.txt";
+        public const string pathToWordList = "Wordlist.txt";
         private NotifyIcon trayIcon;
         private AppReadWriter appHandler;
         //private LowLevelKeyBoardListener listener;
