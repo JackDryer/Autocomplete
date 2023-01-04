@@ -58,6 +58,7 @@ namespace Autocomplete
         public void ResetSelection()
         {
             selectedIndex = 0;
+            UpdateContents();
         }
         delegate void UpdateCallBack(); // for threading
         public void UpdateContents()
