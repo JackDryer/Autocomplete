@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Automation;
 using System.Windows.Automation.Text;
+using System.Windows.Forms;
 using Word = Microsoft.Office.Interop.Word;
 namespace Autocomplete.API
 {
@@ -47,12 +48,21 @@ namespace Autocomplete.API
             var range = GetCurrentWord();
             int left, top, width, height;
 
+            var scale = GetWindowsScaling();
             objWord.ActiveWindow.GetPoint(out left, out top, out width, out height, range);
+            left = (int)(left/scale);
+            top = (int)(top / scale);
+            width = (int)(width / scale);
+            height = (int)(height / scale);
             // Calculate the bounding box for the range
             System.Windows.Rect boundingBox = new System.Windows.Rect(left, top, width, height);
             Console.WriteLine($"shape: {boundingBox.BottomLeft.X},{boundingBox.BottomLeft.Y}");
 
             return new TextInformation { text = range.Text, boundingBox = boundingBox };
+        }
+        public static double GetWindowsScaling() // this feature exists due to a bug in MS word when scalling.
+        {
+            return Screen.PrimaryScreen.WorkingArea.Width / (double)Screen.PrimaryScreen.Bounds.Width;
         }
     }
 }
