@@ -33,8 +33,8 @@ namespace Autocomplete
         public event EventHandler OnAppChange { add => Listener.OnAppChange+=value; remove => Listener.OnAppChange -=value; }
         public HashSet<int> ignorehandles { get => Listener.ignorehandles; set => Listener.ignorehandles =value; }
 
-        public Func<TextPatternRange> GetActiveWord;
-        public Action<string, TextPatternRange> ReplaceWord; //(string text, TextPatternRange rangeToReplace)
+        public Func<TextInformation> GetActiveWord;
+        public Action<string> Insert; //(string text, TextPatternRange rangeToReplace)
 
         public AppReadWriter()
         {
@@ -55,7 +55,7 @@ namespace Autocomplete
                 wordInterface.Latch();
                 windowsInterface.Latch();
                 this.GetActiveWord = wordInterface.GetActiveWord;
-                this.ReplaceWord = wordInterface.Insert;
+                this.Insert = wordInterface.Insert;
                 typingListener.OnTextChange += OnTextChange;// no need to latch as unlatch just removes all events
                 
             }
@@ -63,8 +63,8 @@ namespace Autocomplete
             {
                 // app is like notepad
                 windowsInterface.Latch();
-                this.GetActiveWord = windowsInterface.GetActiveWord;
-                this.ReplaceWord = windowsInterface.ReplaceWord;
+                this.GetActiveWord = windowsInterface.GetActiveWordInfo;
+                this.Insert = windowsInterface.InsertWord;
                 windowsInterface.OnTextChange += OnTextChange;
             }
         }

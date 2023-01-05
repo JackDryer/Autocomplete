@@ -15,7 +15,7 @@ namespace Autocomplete
         //private LowLevelKeyBoardListener listener;
         private DropDown sugestionBox = null;
         private Trie trie;
-        private System.Windows.Automation.Text.TextPatternRange textrange;
+        private TextInformation textInfo;
         public MainProgram()
         {
             // start listening for typing in other apps.
@@ -58,7 +58,7 @@ namespace Autocomplete
 
         void complete(object sender, string word)
         {
-            appHandler.ReplaceWord(word,textrange);
+            appHandler.Insert(word);
         }
         private delegate void AppHandler_OnTextChangeCallback(object sender, EventArgs e);
         private void AppHandler_OnTextChange(object sender, EventArgs e)
@@ -73,11 +73,11 @@ namespace Autocomplete
                 return;
             }
             //sugestionBox.SetTop();
-            textrange = appHandler.GetActiveWord();
-            if (textrange != null && textrange.GetBoundingRectangles().Count()>0 && textrange.GetText(-1).Any(x=>char.IsLetter(x)))
+            textInfo = appHandler.GetActiveWord();
+            if (textInfo != null && textInfo.text.Any(x=>char.IsLetter(x)))
             {
-                var loc = textrange.GetBoundingRectangles()[0].BottomLeft;
-                string word = textrange.GetText(-1);
+                var loc = textInfo.boundingBox.BottomLeft;
+                string word = textInfo.text;
                 sugestionBox.Left = (int)loc.X;
                 sugestionBox.Top = (int)loc.Y;
                 if (word == null)

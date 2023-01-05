@@ -29,6 +29,10 @@ namespace Autocomplete
             int end = start + rangeToReplace.GetText(-1).Length;
             ReplaceTextUsingDll(activeWindow, start, end, text);
         }
+        public void InsertWord(string text)
+        {
+            ReplaceWord(text, GetActiveWord());
+        }
         public int GetRangeIndex(TextPatternRange range)
         {
             return range.CompareEndpoints(TextPatternRangeEndpoint.Start, textPattern.DocumentRange, TextPatternRangeEndpoint.Start);
@@ -98,6 +102,15 @@ namespace Autocomplete
             return caretPosition;
         }
 
+        public TextInformation GetActiveWordInfo()
+        {
+            var range = GetActiveWord();
+            if (!(range != null && range.GetBoundingRectangles().Count() > 0))
+                return null;
+            var text = range.GetText(-1);
+            var box = range.GetBoundingRectangles()[0];
+            return new TextInformation { text = text, boundingBox = box };
+        }
         public TextPatternRange GetActiveWord()
         {
             try

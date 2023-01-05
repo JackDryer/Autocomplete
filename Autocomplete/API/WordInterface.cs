@@ -15,7 +15,7 @@ namespace Autocomplete.API
     {
         private Word.Application objWord;
         public WindowsInterface windowsInterface;
-        public void Insert(string word, TextPatternRange range)
+        public void Insert(string word)
         {
             Thread thread = new Thread(() => {
                 objWord.ScreenUpdating = false; // more astheticaly pleasing
@@ -42,7 +42,7 @@ namespace Autocomplete.API
             return range;
         }
 
-            public TextPatternRange GetActiveWord()
+       public TextInformation GetActiveWord()
         {
             var range = GetCurrentWord();
             int left, top, width, height;
@@ -51,10 +51,16 @@ namespace Autocomplete.API
             // Calculate the bounding box for the range
             System.Windows.Rect boundingBox = new System.Windows.Rect(left, top, width, height);
             Console.WriteLine($"shape: {boundingBox.BottomLeft.X},{boundingBox.BottomLeft.Y}");
-            var other = windowsInterface.GetActiveWord();
-            var loc = other.GetBoundingRectangles()[0].BottomLeft;
-            Console.WriteLine($"UI API: {loc.X},{loc.Y}");
-            return null;
+
+            return new TextInformation { text = range.Text, boundingBox = boundingBox };
         }
+    }
+}
+namespace Autocomplete
+{
+    internal class TextInformation
+    {
+        public string text;
+        public System.Windows.Rect boundingBox;
     }
 }
