@@ -14,6 +14,7 @@ namespace Autocomplete.API
     internal class WordInterface
     {
         private Word.Application objWord;
+        public WindowsInterface windowsInterface;
         public void Insert(string word, TextPatternRange range)
         {
             Thread thread = new Thread(() => {
@@ -44,15 +45,15 @@ namespace Autocomplete.API
             public TextPatternRange GetActiveWord()
         {
             var range = GetCurrentWord();
-            // Get the position of the top-left and bottom-right corners of the range
-            double left = range.Information(Wd.WdInformation.wdHorizontalPositionRelativeToPage);
-            double top = range.Information(Wd.WdInformation.wdVerticalPositionRelativeToPage);
-            double right = left + range.Information(Wd.WdInformation.wdHorizontalSizeRelativeToPage);
-            double bottom = top + range.Information(Wd.WdInformation.wdVerticalSizeRelativeToPage);
+            int left, top, width, height;
 
+            objWord.ActiveWindow.GetPoint(out left, out top, out width, out height, range);
             // Calculate the bounding box for the range
-            System.Windows.Rect boundingBox = new System.Windows.Rect(left, top, right - left, bottom - top);
-
+            System.Windows.Rect boundingBox = new System.Windows.Rect(left, top, width, height);
+            Console.WriteLine($"shape: {boundingBox.BottomLeft.X},{boundingBox.BottomLeft.Y}");
+            var other = windowsInterface.GetActiveWord();
+            var loc = other.GetBoundingRectangles()[0].BottomLeft;
+            Console.WriteLine($"UI API: {loc.X},{loc.Y}");
             return null;
         }
     }

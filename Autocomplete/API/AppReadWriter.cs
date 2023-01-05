@@ -42,6 +42,7 @@ namespace Autocomplete
             typingListener = new TypingListener();
             Listener = new ApplicationListener();
             wordInterface= new WordInterface();
+            wordInterface.windowsInterface = windowsInterface;
             Listener.OnAppChange += Listener_OnAppChange;
         }
         private void Listener_OnAppChange(object sender, EventArgs e)
@@ -52,6 +53,7 @@ namespace Autocomplete
             {
                 // app is like word
                 wordInterface.Latch();
+                windowsInterface.Latch();
                 this.GetActiveWord = wordInterface.GetActiveWord;
                 this.ReplaceWord = wordInterface.Insert;
                 typingListener.OnTextChange += OnTextChange;// no need to latch as unlatch just removes all events
