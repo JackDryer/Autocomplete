@@ -48,8 +48,8 @@ namespace Autocomplete.API
         {
             var range = GetCurrentWord();
             int left, top, width, height;
-
-            var scale = GetWindowsScaling();
+            GetWindowsScaling();
+            var scale = 1;
             Console.WriteLine(scale);
             objWord.ActiveWindow.GetPoint(out left, out top, out width, out height, range);
             left = (int)(left/scale);
@@ -63,7 +63,8 @@ namespace Autocomplete.API
         }
         public static double GetWindowsScaling() // this feature exists due to a bug in MS word when scalling.
         {
-            return SystemParameters.PrimaryScreenWidth/ Screen.PrimaryScreen.Bounds.Width;
+            //return SystemParameters.PrimaryScreenWidth/ Screen.PrimaryScreen.Bounds.Width;
+            return (double)Screen.PrimaryScreen.Bounds.Width / SystemParameters.PrimaryScreenWidth;
         }
     }
 }
