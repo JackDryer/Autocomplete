@@ -54,8 +54,7 @@ namespace Autocomplete
                 // app is like word
                 wordInterface.Latch();
                 windowsInterface.Latch();
-                wordInterface.GetActiveWord();
-                this.GetActiveWord = windowsInterface.GetActiveWordInfo;
+                this.GetActiveWord = windowsInterface.GetActiveWordInfo;//windowsInterface.GetActiveWordInfo;
                 this.Insert = wordInterface.Insert;
                 typingListener.OnTextChange += OnTextChange;// no need to latch as unlatch just removes all events
                 
