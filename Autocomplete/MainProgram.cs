@@ -74,7 +74,7 @@ namespace Autocomplete
             }
             //sugestionBox.SetTop();
             textInfo = appHandler.GetActiveWord();
-            if (textInfo != null && textInfo.text.Any(x=>char.IsLetter(x)))
+            if (textInfo != null&&textInfo.text != null && textInfo.text.Any(x=>char.IsLetter(x)))
             {
                 var loc = textInfo.boundingBox.BottomLeft;
                 string word = textInfo.text;
