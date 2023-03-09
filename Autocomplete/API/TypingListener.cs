@@ -34,12 +34,17 @@ namespace Autocomplete
             {
                 currentWord+=e.KeyPressed.ToString();
             }
-            Thread thread = new Thread(() => { // in new thread so that program the user is typing into can recive the character pressed before this program reads it
-                Thread.Sleep(1);
-                OnTextChange?.Invoke(this, e);
+            if (e.KeyPressed.ToString() != "Escape")
+            {
+                Console.WriteLine(e.KeyPressed.ToString());
+                Thread thread = new Thread(() =>
+                { // in new thread so that program the user is typing into can recive the character pressed before this program reads it
+                    Thread.Sleep(1);
+                    OnTextChange?.Invoke(this, e);
 
-            });
-            thread.Start();
+                });
+                thread.Start();
+            }
             
         }
 
