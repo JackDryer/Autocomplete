@@ -260,7 +260,6 @@ namespace Autocomplete
             int[] handles = { (int)inputBox.Handle, (int)searchBox.Handle, exampleOutBox.GetHandle() };
             return handles;
         }
-
         private void buttonDelete_Click(object sender, EventArgs e)
         {
             mainTrie.Delete(searchBox.Text);
@@ -270,12 +269,20 @@ namespace Autocomplete
 
             // replace the text in the file
             string text = File.ReadAllText(MainProgram.pathToWordList);
-
-            var pattern = $"^({searchBox.Text}:)(\\d+)\\n?";
-            Regex rgx = new Regex(pattern,RegexOptions.Multiline);
-            var replacePattern = "";//$1 references the first group
-            text = rgx.Replace(text, replacePattern).Trim( '\r', '\n' );;
-
+            string[] words = text.Split('\n');
+            string[] newWords = new string[words.Length - 1];
+            int found = 0;
+            for (int i = 0; i < newWords.Length; i++)
+                if (words[i].Split()[0] != searchBox.Text)
+                {
+                    newWords[i] = words[i + found];
+                }
+                else
+                {
+                    i--;
+                    found++;
+                }
+            text = string.Join("\n", newWords);
             File.WriteAllText(MainProgram.pathToWordList, text);
             lblWordPressent.Text = "Word Deleted";
             setWordOptionsDissabled();
