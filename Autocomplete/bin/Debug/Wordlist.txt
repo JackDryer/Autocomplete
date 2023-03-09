@@ -122098,7 +122098,7 @@ pietistical:1
 pietistically:1
 piety:1
 piety's:1
-pietÃ:1
+pietï¿½:1
 s:73
 piezochemistry:1
 piezoelectric:1
@@ -123704,7 +123704,7 @@ podded:1
 podding:1
 poddy:1
 podesta:1
-podestÃ:1
+podestï¿½:1
 podiatric:1
 podiatrist:1
 podiatrist's:1
@@ -166078,7 +166078,7 @@ voids:1
 voila:1
 voile:1
 voile's:1
-voilÃ:1
+voilï¿½:1
 voiture:1
 vol:1
 volant:1
