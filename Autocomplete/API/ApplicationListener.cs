@@ -46,6 +46,9 @@ namespace Autocomplete
         { 
             return activeWindow.Current.ProcessId;
         }
-
+        public void FocusActiveWindow()
+        {
+            OnFocusChange(this, null);
+        }
     }
 }

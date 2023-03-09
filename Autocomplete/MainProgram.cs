@@ -39,6 +39,7 @@ namespace Autocomplete
             sugestionBox.OnComplete += complete;
             appHandler.OnAppChange += AppHandler_onAppChange;
             trie = Trie.LoadFromFile();
+            appHandler.FocusActiveWindow();
         }
 
         private void AppHandler_onAppChange(object sender, EventArgs e)

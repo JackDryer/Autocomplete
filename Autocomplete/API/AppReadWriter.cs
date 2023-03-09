@@ -34,13 +34,14 @@ namespace Autocomplete
 
         public Func<TextPatternRange> GetActiveWord;
         public Action<string, TextPatternRange> ReplaceWord; //(string text, TextPatternRange rangeToReplace)
-
+        public Action FocusActiveWindow;
         public AppReadWriter()
         {
             windowsInterface = new WindowsInterface();
             typingListener = new TypingListener();
             Listener = new ApplicationListener();
             Listener.OnAppChange += Listener_OnAppChange;
+            FocusActiveWindow = Listener.FocusActiveWindow;
         }
 
         private void InsertWindows(string word, TextPatternRange range)
