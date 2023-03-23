@@ -90,6 +90,7 @@ namespace Autocomplete
         {
             if (nCode >= 0 && wParam == (IntPtr)WM_KEYDOWN || wParam == (IntPtr)WM_SYSKEYDOWN)
             {
+                var tempBlockKeys = new HashSet<string>(this.blockKeys); //cannot be modifed during this event call
                 int vkCode = Marshal.ReadInt32(lParam);
                 var keyob = KeyInterop.KeyFromVirtualKey(vkCode);
                 OnKeyPressed?.Invoke(this, new KeyPressedArgs(keyob));
@@ -97,8 +98,10 @@ namespace Autocomplete
                 if (namedEvents.ContainsKey(keyob.ToString()))
                     namedEvents[keyob.ToString()](this, new EventArgs());
 
-                if (this.blockKeys.Contains(keyob.ToString()))
+                if (tempBlockKeys.Contains(keyob.ToString()))
+                {
                     return (IntPtr)(-1);
+                }
             }
             return CallNextHookEx(_hookID, nCode, wParam, lParam);
         }
