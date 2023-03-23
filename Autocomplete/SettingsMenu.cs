@@ -59,7 +59,13 @@ namespace Autocomplete
             {
                 double expValue = TransformPointInRange(value, expSliderMin, expSliderMax, 1, baseNumber);
                 double scaleTransformed = Math.Log(expValue, baseNumber);
-                frequncySlider.Value = (int)(scaleTransformed * frequncySlider.Maximum);
+                var transformed = (int)(scaleTransformed * frequncySlider.Maximum);
+                if (transformed < frequncySlider.Minimum)
+                    frequncySlider.Value = frequncySlider.Minimum;
+                else if (transformed > frequncySlider.Maximum)
+                    frequncySlider.Value = frequncySlider.Maximum;
+                else
+                    frequncySlider.Value = transformed;
             }
         }
         public double TransformPointInRange(double value, double originalMin, double originalMax, double newMin, double newMax)
